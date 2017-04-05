@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -139,8 +138,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_NAME, shoppingList.getName());
-        long shoppingListId = database.insert(TABLE_SHOPPING_LISTS, null, contentValues);
-        return shoppingListId;
+        return database.insert(TABLE_SHOPPING_LISTS, null, contentValues);
     }
 
     /**
@@ -174,13 +172,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param productId is the product id, which you want to read.
      * @return product, which you need, or null.
      */
-    public Product getProduct(long productId){
+    public Product getProduct(long productId) {
         SQLiteDatabase database = this.getWritableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
                 + KEY_ID + " = " + productId;
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
-        if(cursor!=null) {
+        if (cursor != null) {
             cursor.moveToFirst();
             Product product = new Product();
             product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
@@ -205,7 +203,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i(LOG, selectQuery);
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 Product product = new Product();
                 product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
@@ -230,7 +228,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return created project id.
      */
     public long addProduct(Product product) {
-        if(checkProductInDB(product)!=null) {
+        if (checkProductInDB(product) != null) {
             long productId = updateProduct(product);
             return productId;
         } else {
@@ -239,8 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues.put(KEY_NAME, product.getName());
             contentValues.put(KEY_COST, product.getCost());
             contentValues.put(KEY_POPULARITY, product.getPopularity());
-            long productId = database.insert(TABLE_PRODUCTS, null, contentValues);
-            return productId;
+            return database.insert(TABLE_PRODUCTS, null, contentValues);
         }
     }
 
