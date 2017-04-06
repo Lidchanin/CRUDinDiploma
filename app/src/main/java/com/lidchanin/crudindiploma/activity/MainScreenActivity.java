@@ -21,7 +21,7 @@ import java.util.List;
  * Here all shopping lists are displayed and there is a button for adding a new shopping list.
  *
  * @author Lidchanin
- * @see ShoppingList
+ * @see android.app.Activity
  */
 public class MainScreenActivity extends AppCompatActivity {
 
@@ -38,16 +38,16 @@ public class MainScreenActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        initializeButton();
-        initializeRecyclerView();
+        initializeButtons();
+        initializeRecyclerViews();
         initializeData();
-        initializeAdapter();
+        initializeAdapters();
     }
 
     /**
-     * Method <code>initializeButton</code> add an actions for {@link Button}.
+     * Method <code>initializeButtons</code> add an actions for {@link Button}.
      */
-    public void initializeButton() {
+    private void initializeButtons() {
         Button buttonAddShoppingList = (Button) findViewById(R.id.main_screen_button_add_shopping_list);
         buttonAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,9 +70,9 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     /**
-     * Method <code>initializeRecyclerView</code> initializes {@link RecyclerView}.
+     * Method <code>initializeRecyclerViews</code> initializes {@link RecyclerView}.
      */
-    public void initializeRecyclerView() {
+    public void initializeRecyclerViews() {
         recyclerViewAllShoppingLists
                 = (RecyclerView) findViewById(R.id.main_screen_recycler_view_all_shopping_lists);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -80,9 +80,9 @@ public class MainScreenActivity extends AppCompatActivity {
     }
 
     /**
-     * Method <code>initializeAdapter</code> initializes adapter for {@link RecyclerView}.
+     * Method <code>initializeAdapters</code> initializes adapter for {@link RecyclerView}.
      */
-    private void initializeAdapter() {
+    private void initializeAdapters() {
         MainScreenRecyclerViewAdapter adapter
                 = new MainScreenRecyclerViewAdapter(shoppingLists, getApplicationContext());
         recyclerViewAllShoppingLists.setAdapter(adapter);

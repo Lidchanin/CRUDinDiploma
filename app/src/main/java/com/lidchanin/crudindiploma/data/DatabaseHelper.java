@@ -193,7 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Method <code>getAllProducts</code> reads all products in the database.
+     * Method <code>getAllProducts</code> gets all products from the database.
      *
      * @return all products, which you need, or null.
      */
@@ -220,7 +220,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // TODO: 05.04.2017 Check this method
+    // FIXME: 06.04.2017 Check sql-request
+    /**
+     * Method <code>getAllProductsFromCurrentShoppingListById</code> gets all products in needed
+     * shopping list from the database.
+     *
+     * @param shoppingListId is the shopping list id, which contains needed products.
+     * @return all products in shopping list, which you need, or null.
+     */
+    public List<Product> getAllProductsFromCurrentShoppingListById(long shoppingListId) {
+        List<Product> products = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " tp, "
+                + TABLE_SHOPPING_LISTS + " tl, " + TABLE_SHOPPING_LISTS_PRODUCTS + " tlp "
+                + "WHERE tl." + KEY_ID + " = '" + shoppingListId + "'"
+                + " AND " + "tlp." + KEY_ID + " = " + "tlp." + KEY_LIST_ID
+                + " AND " + "tp." + KEY_ID + " = " + "tlp." + KEY_PRODUCT_ID;
+        Log.i(LOG, selectQuery);
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product();
+                product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+                product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
+                product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+                products.add(product);
+            } while (cursor.moveToNext());
+            cursor.close();
+            return products;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
+    // FIXME: 05.04.2017 Check this method, because it's very unusual
     /**
      * Method <code>addProduct</code> adds product in the database.
      *

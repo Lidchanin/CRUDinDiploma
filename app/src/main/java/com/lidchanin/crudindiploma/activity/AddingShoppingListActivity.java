@@ -19,11 +19,10 @@ import com.lidchanin.crudindiploma.data.ShoppingList;
  * {@link AppCompatActivity}. Here you can create a new shopping list.
  *
  * @author Lidchanin
- * @see com.lidchanin.crudindiploma.data.ShoppingList
+ * @see android.app.Activity
  */
 public class AddingShoppingListActivity extends AppCompatActivity {
 
-    private Button buttonAddShoppingList;
     private EditText editTextEnterNameShoppingList;
     private DatabaseHelper databaseHelper;
 
@@ -36,18 +35,18 @@ public class AddingShoppingListActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        initializeButton();
+        initializeButtons();
     }
 
     /**
-     * Method <code>initializeButton</code> initialize button and add an actions for {@link Button}.
+     * Method <code>initializeButtons</code> initialize button and add an actions for
+     * {@link Button}s.
      */
-    public void initializeButton() {
+    public void initializeButtons() {
         databaseHelper = new DatabaseHelper(this);
         editTextEnterNameShoppingList
                 = (EditText) findViewById(R.id.adding_shopping_list_edit_text_enter_shopping_list_name);
-        buttonAddShoppingList
-                = (Button) findViewById(R.id.adding_shopping_list_button_add_shopping_list);
+        Button buttonAddShoppingList = (Button) findViewById(R.id.adding_shopping_list_button_add_shopping_list);
         buttonAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
