@@ -76,6 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOPPING_LISTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOPPING_LISTS_PRODUCTS);
+        onCreate(db);
     }
 
     /**
@@ -105,7 +106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method <code>getAllShoppingLists</code> reads all shopping lists in the database.
      *
-     * @return all shopping lists, which you need, or null.
+     * @return all shopping lists, which you need, or empty shopping lists array.
      */
     public List<ShoppingList> getAllShoppingLists() {
         List<ShoppingList> shoppingLists = new ArrayList<>();
@@ -120,12 +121,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 shoppingList.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
                 shoppingLists.add(shoppingList);
             } while (cursor.moveToNext());
-            cursor.close();
-            return shoppingLists;
-        } else {
-            cursor.close();
-            return null;
         }
+        cursor.close();
+        return shoppingLists;
     }
 
     /**
@@ -167,20 +165,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Method <code>getProduct</code> reads one shopping list in the database.
+     * Method <code>getProductById</code> reads one product by id in the database.
      *
      * @param productId is the product id, which you want to read.
-     * @return product, which you need, or null.
+     * @return product, which you need, or empty product.
      */
-    public Product getProduct(long productId) {
-        SQLiteDatabase database = this.getWritableDatabase();
+    public Product getProductById(long productId) {
+        SQLiteDatabase database = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
                 + KEY_ID + " = " + productId;
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            Product product = new Product();
+        Product product = new Product();
+        if (cursor.moveToFirst()) {
+            product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
+            product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
+            product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+        }
+        cursor.close();
+        return product;
+    }
+
+    /**
+     * Method <code>getProductByName</code> reads one product by name in the database.
+     *
+     * @param productName is the product name, which you want to read.
+     * @return product, which you need, or null.
+     */
+    public Product getProductByName(String productName) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
+                + KEY_NAME + " = " + "'" + productName + "'";
+        Log.i(LOG, selectQuery);
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        Product product = new Product();
+        if (cursor.moveToFirst()) {
             product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
             product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
             product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
@@ -188,6 +208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             return product;
         } else {
+            cursor.close();
             return null;
         }
     }
@@ -195,7 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Method <code>getAllProducts</code> gets all products from the database.
      *
-     * @return all products, which you need, or null.
+     * @return all products, which you need, or empty products array.
      */
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
@@ -212,15 +233,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
                 products.add(product);
             } while (cursor.moveToNext());
-            cursor.close();
-            return products;
-        } else {
-            cursor.close();
-            return null;
         }
+        cursor.close();
+        return products;
     }
 
-    // FIXME: 06.04.2017 Check sql-request
     /**
      * Method <code>getAllProductsFromCurrentShoppingListById</code> gets all products in needed
      * shopping list from the database.
@@ -233,10 +250,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " tp, "
                 + TABLE_SHOPPING_LISTS + " tl, " + TABLE_SHOPPING_LISTS_PRODUCTS + " tlp "
                 + "WHERE tl." + KEY_ID + " = '" + shoppingListId + "'"
-                + " AND " + "tlp." + KEY_ID + " = " + "tlp." + KEY_LIST_ID
-                + " AND " + "tp." + KEY_ID + " = " + "tlp." + KEY_PRODUCT_ID;
+                + " AND " + "tp." + KEY_ID + " = " + "tlp." + KEY_PRODUCT_ID
+                + " AND " + "tl." + KEY_ID + " = " + "tlp." + KEY_LIST_ID;
         Log.i(LOG, selectQuery);
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -245,6 +262,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
                 product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
                 product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+                Log.d(LOG, "_________product id:" + product.getId()
+                        + "\t\tname:" + product.getName()
+                        + "\t\tcost:" + product.getCost()
+                        + "\t\tpopularity:" + product.getPopularity()
+                );
                 products.add(product);
             } while (cursor.moveToNext());
             cursor.close();
@@ -255,25 +277,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // FIXME: 05.04.2017 Check this method, because it's very unusual
     /**
-     * Method <code>addProduct</code> adds product in the database.
+     * Method <code>addProductInCurrentShoppingList</code> adds product in the database and assign
+     * it to shopping list.
      *
-     * @param product is the product, which you want to add to the database.
-     * @return created project id.
+     * @param product        is the product, which you want to add to the database.
+     * @param shoppingListId is the shopping list id.
+     * @return added or updated product id.
+     *
+     * @see #assignProductToShoppingList(long, long)
+     * @see #isExistRelationship(long, long) 
      */
-    public long addProduct(Product product) {
-        if (checkProductInDB(product) != null) {
-            long productId = updateProduct(product);
-            return productId;
-        } else {
+    public long addProductInCurrentShoppingList(Product product, long shoppingListId) {
+        long productId;
+        if (getProductByName(product.getName()) == null) {
+            Log.d(LOG, "Product is not exist.");
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put(KEY_NAME, product.getName());
             contentValues.put(KEY_COST, product.getCost());
             contentValues.put(KEY_POPULARITY, product.getPopularity());
-            return database.insert(TABLE_PRODUCTS, null, contentValues);
+            productId = database.insert(TABLE_PRODUCTS, null, contentValues);
+            assignProductToShoppingList(shoppingListId, productId);
+        } else {
+            Log.d(LOG, "Product is already exist.");
+            product.setId(getProductByName(product.getName()).getId());
+            product.setPopularity(product.getPopularity() + 1);
+            productId = updateProduct(product);
+            if (!isExistRelationship(shoppingListId, productId)) {
+                assignProductToShoppingList(shoppingListId, productId);
+            }
         }
+        return productId;
     }
 
     /**
@@ -284,35 +319,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private long updateProduct(Product product) {
         SQLiteDatabase database = this.getWritableDatabase();
+        Log.d(LOG, "_________UPDATED product id:" + product.getId()
+                + "\t\tname:" + product.getName()
+                + "\t\tcost:" + product.getCost()
+                + "\t\tpopularity:" + product.getPopularity()
+        );
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_NAME, product.getName());
         contentValues.put(KEY_COST, product.getCost());
         contentValues.put(KEY_POPULARITY, product.getPopularity());
         return database.update(TABLE_PRODUCTS, contentValues, KEY_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});
-    }
-
-    /**
-     * Method <code>checkProductInDB</code> search product in the database, which you need. If
-     * product is exist, product is taken from the database, but popularity is increases by 1.
-     *
-     * @param product, which you need to check.
-     * @return existed product or null.
-     */
-    private Product checkProductInDB(Product product) {
-        SQLiteDatabase database = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + KEY_NAME
-                + " = " + product.getName();
-        Cursor cursor = database.rawQuery(selectQuery, null);
-        if (cursor.moveToFirst()) {
-            Product existedProduct = getProduct(product.getId());
-            existedProduct.setPopularity(existedProduct.getPopularity() + 1);
-            cursor.close();
-            return existedProduct;
-        } else {
-            cursor.close();
-            return null;
-        }
     }
 
     /**
@@ -326,4 +343,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(productId)});
     }
 
+    /**
+     * Method <code>assignProductToShoppingList</code> assign product to shopping list.
+     *
+     * @param shoppingListId is the shopping list id.
+     * @param productId      is the product id, which you want to assign to shopping list.
+     */
+    private void assignProductToShoppingList(long shoppingListId, long productId) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_LIST_ID, shoppingListId);
+        contentValues.put(KEY_PRODUCT_ID, productId);
+        database.insert(TABLE_SHOPPING_LISTS_PRODUCTS, null, contentValues);
+    }
+
+    /**
+     * Method <code>isExistRelationship</code> checks the relationship exists or not.
+     *
+     * @param shoppingListId is the shopping list id.
+     * @param productId is the product id.
+     * @return there is relationship or not.
+     */
+    private boolean isExistRelationship(long shoppingListId, long productId) {
+        SQLiteDatabase database = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_SHOPPING_LISTS_PRODUCTS + " WHERE "
+                + KEY_LIST_ID + " = " + shoppingListId + " AND "
+                + KEY_PRODUCT_ID + " = " + productId;
+        Log.i(LOG, selectQuery);
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+
+    // FIXME: 07.04.2017 delete method, because it's need for test only.
+    public List<Long[]> getRelationships() {
+        List<Long[]> relationships = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_SHOPPING_LISTS_PRODUCTS;
+        Log.i(LOG, selectQuery);
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Long[] ids = new Long[3];
+                ids[0] = cursor.getLong(cursor.getColumnIndex(KEY_ID));
+                ids[1] = cursor.getLong(cursor.getColumnIndex(KEY_LIST_ID));
+                ids[2] = cursor.getLong(cursor.getColumnIndex(KEY_PRODUCT_ID));
+                relationships.add(ids);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return relationships;
+    }
 }

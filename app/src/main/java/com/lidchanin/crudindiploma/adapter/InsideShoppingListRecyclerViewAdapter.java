@@ -62,14 +62,14 @@ public class InsideShoppingListRecyclerViewAdapter
         private TextView textViewProductName;
         private TextView textViewProductCost;
 
-        public InsideShoppingListViewHolder(View itemView) {
+        InsideShoppingListViewHolder(View itemView) {
             super(itemView);
-            cardViewProduct
-                    = (CardView) itemView.findViewById(R.id.inside_shopping_list_card_view);
-            textViewProductName
-                    = (TextView) itemView.findViewById(R.id.inside_shopping_list_text_view_name_product_in_card_view);
-            textViewProductCost
-                    = (TextView) itemView.findViewById(R.id.inside_shopping_list_text_view_cost_product_in_card_view);
+            cardViewProduct = (CardView)
+                    itemView.findViewById(R.id.inside_shopping_list_card_view);
+            textViewProductName = (TextView)
+                    itemView.findViewById(R.id.inside_shopping_list_text_view_product_name_in_card_view);
+            textViewProductCost = (TextView)
+                    itemView.findViewById(R.id.inside_shopping_list_text_view_product_cost_in_card_view);
         }
     }
 }

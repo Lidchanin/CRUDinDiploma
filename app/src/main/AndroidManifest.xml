@@ -20,8 +20,9 @@
         <activity android:name=".activity.AddingShoppingListActivity" />
         <activity
             android:name=".activity.InsideShoppingListActivity"
-            android:label="@string/title_activity_inside_shopping_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.InsideShoppingListPopUpWindowActivity"
+            android:theme="@style/AppTheme.PopupWindowInsideShoppingList"/>
     </application>
 
 </manifest>
