@@ -7,14 +7,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.adapter.InsideShoppingListRecyclerViewAdapter;
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
 import com.lidchanin.crudindiploma.data.Product;
+import com.lidchanin.crudindiploma.data.ShoppingList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,6 @@ import java.util.List;
 public class InsideShoppingListActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
-    private FloatingActionButton floatingActionButtonAddProduct;
     private RecyclerView recyclerViewAllProducts;
     private List<Product> products;
 
@@ -45,7 +45,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
 
         long shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
 
-        initializeButtons(shoppingListId);
+        initializeViewsAndButtons(shoppingListId);
         initializeData(shoppingListId);
         initializeRecyclerViews();
         initializeAdapters();
@@ -66,14 +66,14 @@ public class InsideShoppingListActivity extends AppCompatActivity {
     }
 
     /**
-     * Method <code>initializeButtons</code> initialize button and add an actions for
-     * {@link Button}s.
+     * Method <code>initializeViewsAndButtons</code> initialize views and buttons and add them an
+     * actions or other properties.
      *
      * @param shoppingListId is the current shopping list id.
      */
-    private void initializeButtons(final long shoppingListId) {
-        floatingActionButtonAddProduct
-                = (FloatingActionButton) findViewById(R.id.inside_shopping_list_floating_action_button);
+    private void initializeViewsAndButtons(final long shoppingListId) {
+        FloatingActionButton floatingActionButtonAddProduct = (FloatingActionButton)
+                findViewById(R.id.inside_shopping_list_floating_action_button);
         // FIXME: 06.04.2017 fab is need to fix
         floatingActionButtonAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +84,12 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        TextView textViewShoppingListName = (TextView)
+                findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
+        // TODO: 07.04.2017 Doing something with this textView. Wrong or not?
+        textViewShoppingListName.setText("id=" +String.valueOf(shoppingListId)
+        + "\tname=");
     }
 
     /**
@@ -103,6 +109,16 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         InsideShoppingListRecyclerViewAdapter adapter
                 = new InsideShoppingListRecyclerViewAdapter(products, getApplicationContext());
         recyclerViewAllProducts.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(InsideShoppingListActivity.this, MainScreenActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 }

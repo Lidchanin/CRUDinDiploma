@@ -39,7 +39,7 @@
         android:layout_below="@+id/inside_shopping_list_pop_up_window_edit_text_product_name"
         android:layout_marginTop="15dp"
         android:ems="10"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:hint="@string/inside_shopping_list_edit_text_cost_product_in_popup_window"/>
 
     <ImageButton

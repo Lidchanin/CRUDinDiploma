@@ -52,8 +52,6 @@ public class MainScreenRecyclerViewAdapter
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("shoppingListId",
                         shoppingLists.get(holder.getAdapterPosition()).getId());
-                Log.i("myLog " + context.getClass().getSimpleName(), "current shopping list id = "
-                        + shoppingLists.get(holder.getAdapterPosition()).getId());
                 context.startActivity(intent);
             }
         });

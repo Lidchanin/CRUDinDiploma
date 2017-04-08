@@ -3,7 +3,6 @@ package com.lidchanin.crudindiploma.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -39,25 +38,29 @@ public class AddingShoppingListActivity extends AppCompatActivity {
     }
 
     /**
-     * Method <code>initializeButtons</code> initialize button and add an actions for
-     * {@link Button}s.
+     * Method <code>initializeViewsAndButtons</code> initialize views and buttons and add them an
+     * actions or other properties.
      */
     public void initializeButtons() {
         databaseHelper = new DatabaseHelper(this);
-        editTextEnterNameShoppingList
-                = (EditText) findViewById(R.id.adding_shopping_list_edit_text_enter_shopping_list_name);
-        Button buttonAddShoppingList = (Button) findViewById(R.id.adding_shopping_list_button_add_shopping_list);
+        editTextEnterNameShoppingList = (EditText)
+                findViewById(R.id.adding_shopping_list_edit_text_enter_shopping_list_name);
+        Button buttonAddShoppingList = (Button)
+                findViewById(R.id.adding_shopping_list_button_add_shopping_list);
         buttonAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (editTextEnterNameShoppingList.getText().length() >= 3) {
-                    long shoppingListId
-                            = databaseHelper.addShoppingList(
+                    long shoppingListId = databaseHelper.addShoppingList(
                             new ShoppingList(editTextEnterNameShoppingList.getText().toString()));
-                    Log.i("MyLog " + getLocalClassName(), "list_id=" + shoppingListId
-                            + ", list name = " + editTextEnterNameShoppingList.getText().toString());
+                    Intent intent = new Intent(AddingShoppingListActivity.this,
+                            InsideShoppingListActivity.class);
+                    intent.putExtra("shoppingListId", shoppingListId);
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Uncorrected name!", Toast.LENGTH_SHORT).show();
+                    // FIXME: 07.04.2017 do something with Toast
+                    Toast.makeText(getApplicationContext(), "Uncorrected name!", Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
         });
@@ -66,8 +69,7 @@ public class AddingShoppingListActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(AddingShoppingListActivity.this,
-                    MainScreenActivity.class);
+            Intent intent = new Intent(AddingShoppingListActivity.this, MainScreenActivity.class);
             startActivity(intent);
             return true;
         }

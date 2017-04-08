@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -38,16 +39,16 @@ public class MainScreenActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        initializeButtons();
+        initializeViewsAndButtons();
         initializeRecyclerViews();
         initializeData();
         initializeAdapters();
     }
 
     /**
-     * Method <code>initializeButtons</code> add an actions for {@link Button}.
+     * Method <code>initializeViewsAndButtons</code> add an actions for {@link Button}.
      */
-    private void initializeButtons() {
+    private void initializeViewsAndButtons() {
         Button buttonAddShoppingList = (Button) findViewById(R.id.main_screen_button_add_shopping_list);
         buttonAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,5 +87,15 @@ public class MainScreenActivity extends AppCompatActivity {
         MainScreenRecyclerViewAdapter adapter
                 = new MainScreenRecyclerViewAdapter(shoppingLists, getApplicationContext());
         recyclerViewAllShoppingLists.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(MainScreenActivity.this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

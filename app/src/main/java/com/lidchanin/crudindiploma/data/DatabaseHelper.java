@@ -19,7 +19,6 @@ import java.util.List;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // FIXME: 03.04.2017 Log constant
     private static final String LOG = "DatabaseHelper";
 
     private static final int DATABASE_VERSION = 1;
@@ -28,30 +27,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_SHOPPING_LISTS = "shopping_lists";
     private static final String TABLE_PRODUCTS = "products";
     private static final String TABLE_SHOPPING_LISTS_PRODUCTS = "shopping_lists_products";
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_COST = "cost";
-    private static final String KEY_POPULARITY = "popularity";
-    private static final String KEY_LIST_ID = "list_id";
-    private static final String KEY_PRODUCT_ID = "product_id";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_COST = "cost";
+    private static final String COLUMN_POPULARITY = "popularity";
+    private static final String COLUMN_LIST_ID = "list_id";
+    private static final String COLUMN_PRODUCT_ID = "product_id";
 
     private static final String CREATE_TABLE_SHOPPING_LISTS = "CREATE TABLE " + TABLE_SHOPPING_LISTS
             + "("
-            + KEY_ID + " INTEGER PRIMARY KEY, "
-            + KEY_NAME + " TEXT NOT NULL"
+            + COLUMN_ID + " INTEGER PRIMARY KEY, "
+            + COLUMN_NAME + " TEXT NOT NULL"
             + ")";
     private static final String CREATE_TABLE_PRODUCTS = "CREATE TABLE " + TABLE_PRODUCTS
             + "("
-            + KEY_ID + " INTEGER PRIMARY KEY, "
-            + KEY_NAME + " TEXT NOT NULL, "
-            + KEY_COST + " REAL, "
-            + KEY_POPULARITY + " INTEGER"
+            + COLUMN_ID + " INTEGER PRIMARY KEY, "
+            + COLUMN_NAME + " TEXT NOT NULL, "
+            + COLUMN_COST + " REAL, "
+            + COLUMN_POPULARITY + " INTEGER"
             + ")";
-    private static final String CREATE_TABLE_SHOPPING_LISTS_PRODUCTS = "CREATE TABLE " + TABLE_SHOPPING_LISTS_PRODUCTS
+    private static final String CREATE_TABLE_SHOPPING_LISTS_PRODUCTS
+            = "CREATE TABLE " + TABLE_SHOPPING_LISTS_PRODUCTS
             + "("
-            + KEY_ID + " INTEGER PRIMARY KEY, "
-            + KEY_LIST_ID + " INTEGER, "
-            + KEY_PRODUCT_ID + " INTEGER"
+            + COLUMN_ID + " INTEGER PRIMARY KEY, "
+            + COLUMN_LIST_ID + " INTEGER, "
+            + COLUMN_PRODUCT_ID + " INTEGER"
             + ")";
 
     /**
@@ -79,26 +79,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // FIXME: 08.04.2017 Whats doing wrong in this method
     /**
-     * Method <code>getShoppingList</code> reads one shopping list in the database.
+     * Method <code>getShoppingList</code> gets one shopping list in the database.
      *
-     * @param shoppingListId is the shopping list id, which you want to read.
+     * @param shoppingListId is the shopping list id, which you want to get.
      * @return shopping list, which you need, or null.
      */
     public ShoppingList getShoppingList(long shoppingListId) {
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase database = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_SHOPPING_LISTS + " WHERE "
-                + KEY_ID + " = " + shoppingListId;
+                + COLUMN_ID + " = " + "'" + shoppingListId + "'";
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
             ShoppingList shoppingList = new ShoppingList();
-            shoppingList.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-            shoppingList.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+            shoppingList.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+            shoppingList.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+            Log.d(LOG, "__________________id: " + shoppingList.getId() + "\tname: " + shoppingList.getName());
             cursor.close();
             return shoppingList;
         } else {
+            cursor.close();
             return null;
         }
     }
@@ -117,8 +119,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 ShoppingList shoppingList = new ShoppingList();
-                shoppingList.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                shoppingList.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
+                shoppingList.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+                shoppingList.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
                 shoppingLists.add(shoppingList);
             } while (cursor.moveToNext());
         }
@@ -135,7 +137,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long addShoppingList(ShoppingList shoppingList) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_NAME, shoppingList.getName());
+        contentValues.put(COLUMN_NAME, shoppingList.getName());
         return database.insert(TABLE_SHOPPING_LISTS, null, contentValues);
     }
 
@@ -148,8 +150,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long updateShoppingList(ShoppingList shoppingList) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_NAME, shoppingList.getName());
-        return database.update(TABLE_SHOPPING_LISTS, contentValues, KEY_ID + " = ?",
+        contentValues.put(COLUMN_NAME, shoppingList.getName());
+        return database.update(TABLE_SHOPPING_LISTS, contentValues, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(shoppingList.getId())});
     }
 
@@ -160,7 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteShoppingList(long shoppingListId) {
         SQLiteDatabase database = this.getWritableDatabase();
-        database.delete(TABLE_SHOPPING_LISTS, KEY_ID + " = ?",
+        database.delete(TABLE_SHOPPING_LISTS, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(shoppingListId)});
     }
 
@@ -168,23 +170,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Method <code>getProductById</code> reads one product by id in the database.
      *
      * @param productId is the product id, which you want to read.
-     * @return product, which you need, or empty product.
+     * @return product, which you need, or null.
      */
     public Product getProductById(long productId) {
         SQLiteDatabase database = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
-                + KEY_ID + " = " + productId;
+                + COLUMN_ID + " = " + productId;
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
-        Product product = new Product();
         if (cursor.moveToFirst()) {
-            product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-            product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-            product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
-            product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+            Product product = new Product();
+            product.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+            product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+            product.setCost(cursor.getDouble(cursor.getColumnIndex(COLUMN_COST)));
+            product.setPopularity(cursor.getLong(cursor.getColumnIndex(COLUMN_POPULARITY)));
+            cursor.close();
+            return product;
+        } else {
+            cursor.close();
+            return null;
         }
-        cursor.close();
-        return product;
     }
 
     /**
@@ -196,15 +201,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Product getProductByName(String productName) {
         SQLiteDatabase database = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
-                + KEY_NAME + " = " + "'" + productName + "'";
+                + COLUMN_NAME + " = " + "'" + productName + "'";
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
-        Product product = new Product();
         if (cursor.moveToFirst()) {
-            product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-            product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-            product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
-            product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+            Product product = new Product();
+            product.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+            product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+            product.setCost(cursor.getDouble(cursor.getColumnIndex(COLUMN_COST)));
+            product.setPopularity(cursor.getLong(cursor.getColumnIndex(COLUMN_POPULARITY)));
             cursor.close();
             return product;
         } else {
@@ -227,10 +232,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Product product = new Product();
-                product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
-                product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+                product.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+                product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+                product.setCost(cursor.getDouble(cursor.getColumnIndex(COLUMN_COST)));
+                product.setPopularity(cursor.getLong(cursor.getColumnIndex(COLUMN_POPULARITY)));
                 products.add(product);
             } while (cursor.moveToNext());
         }
@@ -249,19 +254,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Product> products = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_PRODUCTS + " tp, "
                 + TABLE_SHOPPING_LISTS + " tl, " + TABLE_SHOPPING_LISTS_PRODUCTS + " tlp "
-                + "WHERE tl." + KEY_ID + " = '" + shoppingListId + "'"
-                + " AND " + "tp." + KEY_ID + " = " + "tlp." + KEY_PRODUCT_ID
-                + " AND " + "tl." + KEY_ID + " = " + "tlp." + KEY_LIST_ID;
+                + "WHERE tl." + COLUMN_ID + " = '" + shoppingListId + "'"
+                + " AND " + "tp." + COLUMN_ID + " = " + "tlp." + COLUMN_PRODUCT_ID
+                + " AND " + "tl." + COLUMN_ID + " = " + "tlp." + COLUMN_LIST_ID;
         Log.i(LOG, selectQuery);
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 Product product = new Product();
-                product.setId(cursor.getLong(cursor.getColumnIndex(KEY_ID)));
-                product.setName(cursor.getString(cursor.getColumnIndex(KEY_NAME)));
-                product.setCost(cursor.getDouble(cursor.getColumnIndex(KEY_COST)));
-                product.setPopularity(cursor.getLong(cursor.getColumnIndex(KEY_POPULARITY)));
+                product.setId(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)));
+                product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
+                product.setCost(cursor.getDouble(cursor.getColumnIndex(COLUMN_COST)));
+                product.setPopularity(cursor.getLong(cursor.getColumnIndex(COLUMN_POPULARITY)));
                 Log.d(LOG, "_________product id:" + product.getId()
                         + "\t\tname:" + product.getName()
                         + "\t\tcost:" + product.getCost()
@@ -284,9 +289,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param product        is the product, which you want to add to the database.
      * @param shoppingListId is the shopping list id.
      * @return added or updated product id.
-     *
      * @see #assignProductToShoppingList(long, long)
-     * @see #isExistRelationship(long, long) 
+     * @see #isExistRelationship(long, long)
      */
     public long addProductInCurrentShoppingList(Product product, long shoppingListId) {
         long productId;
@@ -294,9 +298,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(LOG, "Product is not exist.");
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(KEY_NAME, product.getName());
-            contentValues.put(KEY_COST, product.getCost());
-            contentValues.put(KEY_POPULARITY, product.getPopularity());
+            contentValues.put(COLUMN_NAME, product.getName());
+            contentValues.put(COLUMN_COST, product.getCost());
+            contentValues.put(COLUMN_POPULARITY, product.getPopularity());
             productId = database.insert(TABLE_PRODUCTS, null, contentValues);
             assignProductToShoppingList(shoppingListId, productId);
         } else {
@@ -325,10 +329,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "\t\tpopularity:" + product.getPopularity()
         );
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_NAME, product.getName());
-        contentValues.put(KEY_COST, product.getCost());
-        contentValues.put(KEY_POPULARITY, product.getPopularity());
-        return database.update(TABLE_PRODUCTS, contentValues, KEY_ID + " = ?",
+        contentValues.put(COLUMN_NAME, product.getName());
+        contentValues.put(COLUMN_COST, product.getCost());
+        contentValues.put(COLUMN_POPULARITY, product.getPopularity());
+        return database.update(TABLE_PRODUCTS, contentValues, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(product.getId())});
     }
 
@@ -339,7 +343,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteProduct(long productId) {
         SQLiteDatabase database = this.getWritableDatabase();
-        database.delete(TABLE_PRODUCTS, KEY_ID + " = ?",
+        database.delete(TABLE_PRODUCTS, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(productId)});
     }
 
@@ -352,8 +356,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void assignProductToShoppingList(long shoppingListId, long productId) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_LIST_ID, shoppingListId);
-        contentValues.put(KEY_PRODUCT_ID, productId);
+        contentValues.put(COLUMN_LIST_ID, shoppingListId);
+        contentValues.put(COLUMN_PRODUCT_ID, productId);
         database.insert(TABLE_SHOPPING_LISTS_PRODUCTS, null, contentValues);
     }
 
@@ -361,14 +365,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Method <code>isExistRelationship</code> checks the relationship exists or not.
      *
      * @param shoppingListId is the shopping list id.
-     * @param productId is the product id.
+     * @param productId      is the product id.
      * @return there is relationship or not.
      */
     private boolean isExistRelationship(long shoppingListId, long productId) {
         SQLiteDatabase database = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_SHOPPING_LISTS_PRODUCTS + " WHERE "
-                + KEY_LIST_ID + " = " + shoppingListId + " AND "
-                + KEY_PRODUCT_ID + " = " + productId;
+                + COLUMN_LIST_ID + " = " + shoppingListId + " AND "
+                + COLUMN_PRODUCT_ID + " = " + productId;
         Log.i(LOG, selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
@@ -390,9 +394,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Long[] ids = new Long[3];
-                ids[0] = cursor.getLong(cursor.getColumnIndex(KEY_ID));
-                ids[1] = cursor.getLong(cursor.getColumnIndex(KEY_LIST_ID));
-                ids[2] = cursor.getLong(cursor.getColumnIndex(KEY_PRODUCT_ID));
+                ids[0] = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
+                ids[1] = cursor.getLong(cursor.getColumnIndex(COLUMN_LIST_ID));
+                ids[2] = cursor.getLong(cursor.getColumnIndex(COLUMN_PRODUCT_ID));
                 relationships.add(ids);
             } while (cursor.moveToNext());
         }
