@@ -6,16 +6,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.adapter.InsideShoppingListRecyclerViewAdapter;
-import com.lidchanin.crudindiploma.data.DatabaseHelper;
-import com.lidchanin.crudindiploma.data.Product;
-import com.lidchanin.crudindiploma.data.ShoppingList;
+import com.lidchanin.crudindiploma.data.dao.ProductDAO;
+import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +29,13 @@ import java.util.List;
  */
 public class InsideShoppingListActivity extends AppCompatActivity {
 
-    private DatabaseHelper databaseHelper;
     private RecyclerView recyclerViewAllProducts;
+
     private List<Product> products;
+    private long shoppingListId;
+
+    private ShoppingListDAO shoppingListDAO;
+    private ProductDAO productDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +46,29 @@ public class InsideShoppingListActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        long shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
+        shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
+
+        shoppingListDAO = new ShoppingListDAO(this);
+        productDAO = new ProductDAO(this);
 
         initializeViewsAndButtons(shoppingListId);
         initializeData(shoppingListId);
         initializeRecyclerViews();
         initializeAdapters();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shoppingListDAO.open();
+        productDAO.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shoppingListDAO.close();
+        productDAO.close();
     }
 
     /**
@@ -58,8 +78,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
      * @param shoppingListId is the current shopping list id.
      */
     private void initializeData(long shoppingListId) {
-        databaseHelper = new DatabaseHelper(this);
-        products = databaseHelper.getAllProductsFromCurrentShoppingListById(shoppingListId);
+        products = productDAO.getAllFromCurrentShoppingList(shoppingListId);
         if (products == null) {
             products = new ArrayList<>();
         }
@@ -74,7 +93,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
     private void initializeViewsAndButtons(final long shoppingListId) {
         FloatingActionButton floatingActionButtonAddProduct = (FloatingActionButton)
                 findViewById(R.id.inside_shopping_list_floating_action_button);
-        // FIXME: 06.04.2017 fab is need to fix
+        // FIXME: 06.04.2017 fab is need to fix?
         floatingActionButtonAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,9 +106,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
 
         TextView textViewShoppingListName = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
-        // TODO: 07.04.2017 Doing something with this textView. Wrong or not?
-        textViewShoppingListName.setText("id=" +String.valueOf(shoppingListId)
-        + "\tname=");
+        textViewShoppingListName.setText("id=" + String.valueOf(shoppingListId));
     }
 
     /**
@@ -107,7 +124,8 @@ public class InsideShoppingListActivity extends AppCompatActivity {
      */
     private void initializeAdapters() {
         InsideShoppingListRecyclerViewAdapter adapter
-                = new InsideShoppingListRecyclerViewAdapter(products, getApplicationContext());
+                = new InsideShoppingListRecyclerViewAdapter(products, getApplicationContext(),
+                shoppingListId);
         recyclerViewAllProducts.setAdapter(adapter);
     }
 

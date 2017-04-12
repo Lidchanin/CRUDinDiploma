@@ -10,8 +10,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
-import com.lidchanin.crudindiploma.data.DatabaseHelper;
-import com.lidchanin.crudindiploma.data.ShoppingList;
+import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
 /**
  * Class <code>AddingShoppingListActivity</code> is a activity and extends
@@ -23,7 +23,8 @@ import com.lidchanin.crudindiploma.data.ShoppingList;
 public class AddingShoppingListActivity extends AppCompatActivity {
 
     private EditText editTextEnterNameShoppingList;
-    private DatabaseHelper databaseHelper;
+
+    private ShoppingListDAO shoppingListDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,21 @@ public class AddingShoppingListActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        shoppingListDAO = new ShoppingListDAO(this);
+
         initializeButtons();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shoppingListDAO.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shoppingListDAO.close();
     }
 
     /**
@@ -42,7 +57,6 @@ public class AddingShoppingListActivity extends AppCompatActivity {
      * actions or other properties.
      */
     public void initializeButtons() {
-        databaseHelper = new DatabaseHelper(this);
         editTextEnterNameShoppingList = (EditText)
                 findViewById(R.id.adding_shopping_list_edit_text_enter_shopping_list_name);
         Button buttonAddShoppingList = (Button)
@@ -51,7 +65,7 @@ public class AddingShoppingListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (editTextEnterNameShoppingList.getText().length() >= 3) {
-                    long shoppingListId = databaseHelper.addShoppingList(
+                    long shoppingListId = shoppingListDAO.add(
                             new ShoppingList(editTextEnterNameShoppingList.getText().toString()));
                     Intent intent = new Intent(AddingShoppingListActivity.this,
                             InsideShoppingListActivity.class);

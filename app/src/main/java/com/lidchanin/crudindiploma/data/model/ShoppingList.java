@@ -1,4 +1,4 @@
-package com.lidchanin.crudindiploma.data;
+package com.lidchanin.crudindiploma.data.model;
 
 /**
  * Class {@link ShoppingList} is an entity. Shopping list contains id, name.
@@ -18,9 +18,21 @@ public class ShoppingList {
 
     /**
      * Constructor for create a shopping list.
+     *
      * @param name is the shopping list name.
      */
     public ShoppingList(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Constructor for create a shopping list.
+     *
+     * @param id   is the shopping list id.
+     * @param name is the shopping list name.
+     */
+    public ShoppingList(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 

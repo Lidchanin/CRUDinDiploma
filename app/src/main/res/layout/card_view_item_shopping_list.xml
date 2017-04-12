@@ -30,10 +30,10 @@
                 android:paddingRight="10dp"
                 android:textSize="30sp" />
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/main_screen_image_button_delete_in_card_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:src="@drawable/ic_clear_black_24dp" />
 
         </LinearLayout>

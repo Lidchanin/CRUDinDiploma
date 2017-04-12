@@ -9,26 +9,31 @@ import android.widget.Button;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
-import com.lidchanin.crudindiploma.data.Product;
-import com.lidchanin.crudindiploma.data.ShoppingList;
+import com.lidchanin.crudindiploma.data.dao.ProductDAO;
+import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.Product;
+import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String LOG = "MainActivity";
     private Button buttonGoToApp;
     private Button buttonShowLists;
     private Button buttonShowProducts;
     private Button buttonShowRelationship;
+
     private DatabaseHelper databaseHelper;
+    private ShoppingListDAO shoppingListDAO;
+    private ProductDAO productDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        databaseHelper = new DatabaseHelper(getApplicationContext());
+        shoppingListDAO = new ShoppingListDAO(this);
+        productDAO = new ProductDAO(this);
 
         buttonGoToApp = (Button) findViewById(R.id.button_go_to_app);
         buttonGoToApp.setOnClickListener(new View.OnClickListener() {
@@ -43,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
         buttonShowLists.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOG, "__________Lists__________");
-                List<ShoppingList> shoppingLists = databaseHelper.getAllShoppingLists();
+                Log.d("MY_LOG", "__________Lists__________");
+                List<ShoppingList> shoppingLists = shoppingListDAO.getAll();
                 for (int i = 0; i < shoppingLists.size(); i++) {
-                    Log.d(LOG, "\tid: " + shoppingLists.get(i).getId()
+                    Log.d("MY_LOG", "\tid: " + shoppingLists.get(i).getId()
                             + ",\tname: " + shoppingLists.get(i).getName());
                 }
             }
@@ -56,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
         buttonShowProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOG, "__________Products__________");
-                List<Product> products = databaseHelper.getAllProducts();
+                Log.d("MY_LOG", "__________Products__________");
+                List<Product> products = productDAO.getAll();
                 for (int i = 0; i < products.size(); i++) {
-                    Log.d(LOG, "\tid: " + products.get(i).getId()
+                    Log.d("MY_LOG", "\tid: " + products.get(i).getId()
                             + ",\tname: " + products.get(i).getName()
                             + ",\tcost: " + products.get(i).getCost()
                             + ",\tpopularity: " + products.get(i).getPopularity());
@@ -71,15 +76,28 @@ public class MainActivity extends AppCompatActivity {
         buttonShowRelationship.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOG, "__________Relationships__________");
-                List<Long[]> relationships = databaseHelper.getRelationships();
-                for (int i = 0; i < relationships.size(); i++) {
-                    Log.d(LOG, "\tid: " + relationships.get(i)[0].toString()
-                            + ",\tlist id: " + relationships.get(i)[1].toString()
-                            + ",\tproduct id: " + relationships.get(i)[2].toString()
-                    );
+                Log.d("MY_LOG", "__________Relationship__________");
+                List<Long[]> products = shoppingListDAO.getAllRelationships();
+                for (int i = 0; i < products.size(); i++) {
+                    Log.d("MY_LOG", "\tid: " + products.get(i)[0]
+                            + ",\tlist: " + products.get(i)[1]
+                            + ",\tprod: " + products.get(i)[2]);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shoppingListDAO.open();
+        productDAO.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shoppingListDAO.close();
+        productDAO.close();
     }
 }

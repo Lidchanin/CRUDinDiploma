@@ -12,8 +12,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
-import com.lidchanin.crudindiploma.data.DatabaseHelper;
-import com.lidchanin.crudindiploma.data.Product;
+import com.lidchanin.crudindiploma.data.dao.ProductDAO;
+import com.lidchanin.crudindiploma.data.model.Product;
 
 /**
  * Class <code>InsideShoppingListPopUpWindowActivity</code> is a activity and extends
@@ -26,13 +26,18 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
 
     private EditText editTextProductName;
     private EditText editTextProductCost;
-    private DatabaseHelper databaseHelper;
     private long shoppingListId;
+
+    private ProductDAO productDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inside_shopping_list_pop_up_window);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -40,9 +45,23 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
         int height = displayMetrics.heightPixels;
         getWindow().setLayout((int) (width * .8), (int) (height * .6));
 
+        productDAO = new ProductDAO(this);
+
         shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
 
         initializeButtons(shoppingListId);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        productDAO.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        productDAO.close();
     }
 
     /**
@@ -85,11 +104,10 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
                     Toast.makeText(InsideShoppingListPopUpWindowActivity.this,
                             "Enter cost!", Toast.LENGTH_SHORT).show();
                 } else {
-                    databaseHelper = new DatabaseHelper(getApplicationContext());
                     Product product = new Product();
                     product.setName(editTextProductName.getText().toString());
                     product.setCost(Double.valueOf(editTextProductCost.getText().toString()));
-                    databaseHelper.addProductInCurrentShoppingList(product, shoppingListId);
+                    productDAO.addInCurrentShoppingList(product, shoppingListId);
 
                     Intent intent = new Intent(InsideShoppingListPopUpWindowActivity.this,
                             InsideShoppingListActivity.class);

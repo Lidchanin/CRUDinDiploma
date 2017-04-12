@@ -1,4 +1,4 @@
-package com.lidchanin.crudindiploma.data;
+package com.lidchanin.crudindiploma.data.model;
 
 /**
  * Class {@link Product} ia an entity. Product contains id, name, cost and
@@ -22,10 +22,24 @@ public class Product {
 
     /**
      * Constructor for create a product with name and cost.
+     *
      * @param name is the product name.
      * @param cost is the product cost.
      */
     public Product(String name, double cost) {
+        this.name = name;
+        this.cost = cost;
+    }
+
+    /**
+     * Constructor for create a product with id, name and cost.
+     *
+     * @param id   is the product id.
+     * @param name is the product name.
+     * @param cost is the product cost.
+     */
+    public Product(long id, String name, double cost) {
+        this.id = id;
         this.name = name;
         this.cost = cost;
     }

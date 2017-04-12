@@ -11,8 +11,8 @@ import android.widget.Button;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.adapter.MainScreenRecyclerViewAdapter;
-import com.lidchanin.crudindiploma.data.DatabaseHelper;
-import com.lidchanin.crudindiploma.data.ShoppingList;
+import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,9 @@ import java.util.List;
 public class MainScreenActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewAllShoppingLists;
-    private DatabaseHelper databaseHelper;
     private List<ShoppingList> shoppingLists;
+
+    private ShoppingListDAO shoppingListDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +40,32 @@ public class MainScreenActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        shoppingListDAO = new ShoppingListDAO(this);
+
         initializeViewsAndButtons();
         initializeRecyclerViews();
         initializeData();
         initializeAdapters();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shoppingListDAO.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shoppingListDAO.close();
+    }
+
     /**
      * Method <code>initializeViewsAndButtons</code> add an actions for {@link Button}.
      */
     private void initializeViewsAndButtons() {
-        Button buttonAddShoppingList = (Button) findViewById(R.id.main_screen_button_add_shopping_list);
-        buttonAddShoppingList.setOnClickListener(new View.OnClickListener() {
+        Button buttonAdd = (Button) findViewById(R.id.main_screen_button_add_shopping_list);
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainScreenActivity.this, AddingShoppingListActivity.class);
@@ -63,8 +78,7 @@ public class MainScreenActivity extends AppCompatActivity {
      * Method <code>initializeData</code> reads and receives all shopping lists from the database.
      */
     private void initializeData() {
-        databaseHelper = new DatabaseHelper(this);
-        shoppingLists = databaseHelper.getAllShoppingLists();
+        shoppingLists = shoppingListDAO.getAll();
         if (shoppingLists == null) {
             shoppingLists = new ArrayList<>();
         }
@@ -74,8 +88,8 @@ public class MainScreenActivity extends AppCompatActivity {
      * Method <code>initializeRecyclerViews</code> initializes {@link RecyclerView}.
      */
     public void initializeRecyclerViews() {
-        recyclerViewAllShoppingLists
-                = (RecyclerView) findViewById(R.id.main_screen_recycler_view_all_shopping_lists);
+        recyclerViewAllShoppingLists = (RecyclerView)
+                findViewById(R.id.main_screen_recycler_view_all_shopping_lists);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewAllShoppingLists.setLayoutManager(layoutManager);
     }
