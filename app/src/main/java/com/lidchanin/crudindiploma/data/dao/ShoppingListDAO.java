@@ -44,7 +44,7 @@ public class ShoppingListDAO extends DatabaseDAO {
      * Method <code>update</code> update shopping list in the database.
      *
      * @param shoppingList is the shopping list, which you need to update.
-     * @return updated shopping list id.
+     * @return the number of rows affected.
      */
     public long update(ShoppingList shoppingList) {
         ContentValues contentValues = new ContentValues();

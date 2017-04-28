@@ -17,7 +17,7 @@ public class DatabaseDAO {
     private DatabaseHelper databaseHelper;
     private Context context;
 
-    public DatabaseDAO(Context context) {
+    DatabaseDAO(Context context) {
         this.context = context;
         databaseHelper = DatabaseHelper.getHelper(context);
         open();

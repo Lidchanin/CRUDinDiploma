@@ -98,7 +98,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(InsideShoppingListActivity.this,
-                        InsideShoppingListPopUpWindowActivity.class);
+                        InsideShoppingListAddProductPopUpWindowActivity.class);
                 intent.putExtra("shoppingListId", shoppingListId);
                 startActivity(intent);
             }
@@ -106,7 +106,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
 
         TextView textViewShoppingListName = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
-        textViewShoppingListName.setText("id=" + String.valueOf(shoppingListId));
+        textViewShoppingListName.setText("id = " + String.valueOf(shoppingListId));
     }
 
     /**

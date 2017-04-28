@@ -16,16 +16,17 @@ import com.lidchanin.crudindiploma.data.dao.ProductDAO;
 import com.lidchanin.crudindiploma.data.model.Product;
 
 /**
- * Class <code>InsideShoppingListPopUpWindowActivity</code> is a activity and extends
+ * Class <code>InsideShoppingListAddProductPopUpWindowActivity</code> is a activity and extends
  * {@link AppCompatActivity}. Here you add products in shopping list.
  *
  * @author Lidchanin
  * @see android.app.Activity
  */
-public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
+public class InsideShoppingListAddProductPopUpWindowActivity extends AppCompatActivity {
 
     private EditText editTextProductName;
     private EditText editTextProductCost;
+
     private long shoppingListId;
 
     private ProductDAO productDAO;
@@ -33,7 +34,7 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inside_shopping_list_pop_up_window);
+        setContentView(R.layout.activity_inside_shopping_list_add_product_pop_up_window);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -72,36 +73,36 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
      */
     private void initializeButtons(final long shoppingListId) {
         editTextProductName = (EditText)
-                findViewById(R.id.inside_shopping_list_pop_up_window_edit_text_product_name);
+                findViewById(R.id.inside_shopping_list_add_product_pop_up_window_edit_text_product_name);
         editTextProductCost = (EditText)
-                findViewById(R.id.inside_shopping_list_pop_up_window_edit_text_product_cost);
+                findViewById(R.id.inside_shopping_list_add_product_pop_up_window_edit_text_product_cost);
 
-        ImageButton closeButton = (ImageButton)
-                findViewById(R.id.inside_shopping_list_pop_up_window_image_button_close);
-        closeButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton imageButtonClose = (ImageButton)
+                findViewById(R.id.inside_shopping_list_add_product_pop_up_window_image_button_close);
+        imageButtonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InsideShoppingListPopUpWindowActivity.this,
+                Intent intent = new Intent(InsideShoppingListAddProductPopUpWindowActivity.this,
                         InsideShoppingListActivity.class);
                 intent.putExtra("shoppingListId", shoppingListId);
                 startActivity(intent);
             }
         });
 
-        ImageButton addButton = (ImageButton)
-                findViewById(R.id.inside_shopping_list_pop_up_window_image_button_add);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton imageButtonAdd = (ImageButton)
+                findViewById(R.id.inside_shopping_list_add_product_pop_up_window_image_button_add);
+        imageButtonAdd.setOnClickListener(new View.OnClickListener() {
             // FIXME: 07.04.2017 delete all ifs
             @Override
             public void onClick(View v) {
                 if (editTextProductName.length() <= 1 && editTextProductCost.length() == 0) {
-                    Toast.makeText(InsideShoppingListPopUpWindowActivity.this,
+                    Toast.makeText(InsideShoppingListAddProductPopUpWindowActivity.this,
                             "Enter name and cost!", Toast.LENGTH_SHORT).show();
                 } else if (editTextProductName.length() <= 1) {
-                    Toast.makeText(InsideShoppingListPopUpWindowActivity.this,
+                    Toast.makeText(InsideShoppingListAddProductPopUpWindowActivity.this,
                             "Enter name!", Toast.LENGTH_SHORT).show();
                 } else if (editTextProductCost.length() == 0) {
-                    Toast.makeText(InsideShoppingListPopUpWindowActivity.this,
+                    Toast.makeText(InsideShoppingListAddProductPopUpWindowActivity.this,
                             "Enter cost!", Toast.LENGTH_SHORT).show();
                 } else {
                     Product product = new Product();
@@ -109,7 +110,7 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
                     product.setCost(Double.valueOf(editTextProductCost.getText().toString()));
                     productDAO.addInCurrentShoppingList(product, shoppingListId);
 
-                    Intent intent = new Intent(InsideShoppingListPopUpWindowActivity.this,
+                    Intent intent = new Intent(InsideShoppingListAddProductPopUpWindowActivity.this,
                             InsideShoppingListActivity.class);
                     intent.putExtra("shoppingListId", shoppingListId);
                     startActivity(intent);
@@ -121,7 +122,7 @@ public class InsideShoppingListPopUpWindowActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(InsideShoppingListPopUpWindowActivity.this,
+            Intent intent = new Intent(InsideShoppingListAddProductPopUpWindowActivity.this,
                     InsideShoppingListActivity.class);
             intent.putExtra("shoppingListId", shoppingListId);
             startActivity(intent);

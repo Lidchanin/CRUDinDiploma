@@ -21,8 +21,11 @@
         <activity
             android:name=".activity.InsideShoppingListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.InsideShoppingListPopUpWindowActivity"
-            android:theme="@style/AppTheme.PopupWindowInsideShoppingList"/>
+        <activity
+            android:name=".activity.InsideShoppingListAddProductPopUpWindowActivity"
+            android:theme="@style/AppTheme.PopupWindowInsideShoppingList" />
+        <activity android:name=".activity.MainScreenPopUpWindowActivity" />
+        <activity android:name=".activity.InsideShoppingListUpdateProductPopUpWindowActivity"></activity>
     </application>
 
 </manifest>

@@ -35,11 +35,11 @@ public class ProductDAO extends DatabaseDAO {
      * @return product, which you need, or null.
      */
     public Product getOneById(long productId) {
-        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS,
+        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS,
                 new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
                         DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY},
                 WHERE_ID_EQUALS,
-                new String[]{String.valueOf(productId)}, null, null, String.valueOf(1));
+                new String[]{String.valueOf(productId)}, null, null, null, String.valueOf(1));
         if (cursor.moveToFirst()) {
             Product product = new Product();
             product.setId(cursor.getLong(0));
@@ -155,8 +155,9 @@ public class ProductDAO extends DatabaseDAO {
      */
     public long addInCurrentShoppingList(Product product, long shoppingListId) {
         long productId;
-        if (getOneByName(product.getName()) == null) {
-            Log.d("MY_LOG", "Product is not exist.");
+        Product existedProduct = getOneByName(product.getName());
+        if (existedProduct == null) {
+            Log.i("MY_LOG " + ProductDAO.class.getSimpleName(), "Product is not exist.");
             ContentValues contentValues = new ContentValues();
             contentValues.put(DatabaseHelper.COLUMN_NAME, product.getName());
             contentValues.put(DatabaseHelper.COLUMN_COST, product.getCost());
@@ -164,11 +165,15 @@ public class ProductDAO extends DatabaseDAO {
             productId = database.insert(DatabaseHelper.TABLE_PRODUCTS, null, contentValues);
             assignProductToShoppingList(shoppingListId, productId);
         } else {
-            Log.d("MY_LOG", "Product is already exist.");
-            product.setId(getOneByName(product.getName()).getId());
-            product.setPopularity(product.getPopularity() + 1);
-            productId = update(product);
+            Log.i("MY_LOG " + ProductDAO.class.getSimpleName(), "Product is already exist.");
+            product.setId(existedProduct.getId());
+            product.setPopularity(existedProduct.getPopularity() + 1);
+            Log.d("MY_LOG", existedProduct.getId() + "\t" + existedProduct.getName() + "\t" + existedProduct.getCost() + "\t" + existedProduct.getPopularity());
+            Log.d("MY_LOG", product.getId() + "\t" + product.getName() + "\t" + product.getCost() + "\t" + product.getPopularity());
+            productId = product.getId();
+            update(product);
             if (!isExistRelationship(shoppingListId, productId)) {
+                Log.d("MY_LOG", "create relationship");
                 assignProductToShoppingList(shoppingListId, productId);
             }
         }
@@ -179,7 +184,7 @@ public class ProductDAO extends DatabaseDAO {
      * Method <code>update</code> update product in the database.
      *
      * @param product is the product, which you need to update.
-     * @return updated product id.
+     * @return the number of rows affected.
      */
     public long update(Product product) {
         ContentValues contentValues = new ContentValues();
@@ -236,7 +241,8 @@ public class ProductDAO extends DatabaseDAO {
         String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS
                 + " WHERE "
                 + DatabaseHelper.COLUMN_LIST_ID + " = " + shoppingListId
-                + " AND " + DatabaseHelper.COLUMN_PRODUCT_ID + " = " + productId;
+                + " AND "
+                + DatabaseHelper.COLUMN_PRODUCT_ID + " = " + productId;
         Log.i("MY_LOG", selectQuery);
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.activity.InsideShoppingListActivity;
 import com.lidchanin.crudindiploma.activity.MainScreenActivity;
+import com.lidchanin.crudindiploma.activity.MainScreenPopUpWindowActivity;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
@@ -58,6 +59,16 @@ public class MainScreenRecyclerViewAdapter
                 context.startActivity(intent);
             }
         });
+        holder.cardViewShoppingList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(context, MainScreenPopUpWindowActivity.class);
+                intent.putExtra("shoppingListId",
+                        shoppingLists.get(holder.getAdapterPosition()).getId());
+                context.startActivity(intent);
+                return true;
+            }
+        });
         holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,7 +76,9 @@ public class MainScreenRecyclerViewAdapter
                 ShoppingListDAO shoppingListDAO = new ShoppingListDAO(context);
                 shoppingListDAO.delete(shoppingLists.get(holder.getAdapterPosition()));
                 // FIXME: 12.04.2017 doing something with this shit code!!!
-                context.startActivity(new Intent(context, MainScreenActivity.class));
+                Intent intent = new Intent(context, MainScreenActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
             }
         });
     }

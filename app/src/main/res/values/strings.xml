@@ -3,6 +3,9 @@
     <string name="main_screen_button_add_shopping_list">Add new shopping list</string>
     <string name="adding_shopping_list_button_add_shopping_list">Save list with current name</string>
     <string name="adding_shopping_list_exit_text_enter_shopping_list_name">Enter shopping list name</string>
-    <string name="inside_shopping_list_edit_text_name_product_in_popup_window">Enter name</string>
-    <string name="inside_shopping_list_edit_text_cost_product_in_popup_window">Enter cost</string>
+    <string name="inside_shopping_list_add_product_edit_text_name_product_in_pop_up_window">Enter name</string>
+    <string name="inside_shopping_list_add_product_edit_text_cost_product_in_pop_up_window">Enter cost</string>
+    <string name="inside_shopping_list_update_product_edit_text_name_product_in_pop_up_window">Enter name</string>
+    <string name="inside_shopping_list_update_product_edit_text_cost_product_in_pop_up_window">Enter cost</string>
+    <string name="main_screen_edit_text_name_shopping_list_in_pop_up_window">Enter new name</string>
 </resources>

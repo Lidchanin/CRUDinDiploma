@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.activity.InsideShoppingListActivity;
+import com.lidchanin.crudindiploma.activity.InsideShoppingListUpdateProductPopUpWindowActivity;
 import com.lidchanin.crudindiploma.data.dao.ProductDAO;
 import com.lidchanin.crudindiploma.data.model.Product;
 
@@ -56,8 +58,20 @@ public class InsideShoppingListRecyclerViewAdapter
                 productDAO.delete(shoppingListId, products.get(holder.getAdapterPosition()).getId());
                 // FIXME: 12.04.2017 Doing something with this shit code!
                 Intent intent = new Intent(context, InsideShoppingListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("shoppingListId", shoppingListId);
                 context.startActivity(intent);
+            }
+        });
+        holder.cardViewProduct.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(context,
+                        InsideShoppingListUpdateProductPopUpWindowActivity.class);
+                intent.putExtra("shoppingListId", shoppingListId);
+                intent.putExtra("productId", products.get(holder.getAdapterPosition()).getId());
+                context.startActivity(intent);
+                return true;
             }
         });
     }
