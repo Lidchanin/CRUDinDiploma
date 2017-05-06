@@ -1,14 +1,18 @@
 package com.lidchanin.crudindiploma.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.adapter.InsideShoppingListRecyclerViewAdapter;
@@ -103,7 +107,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        // FIXME: 04.05.2017 delete or doing something with textView
         TextView textViewShoppingListName = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
         textViewShoppingListName.setText("id = " + String.valueOf(shoppingListId));
@@ -124,19 +128,69 @@ public class InsideShoppingListActivity extends AppCompatActivity {
      */
     private void initializeAdapters() {
         InsideShoppingListRecyclerViewAdapter adapter
-                = new InsideShoppingListRecyclerViewAdapter(products, getApplicationContext(),
-                shoppingListId);
+                = new InsideShoppingListRecyclerViewAdapter(products, this, shoppingListId);
         recyclerViewAllProducts.setAdapter(adapter);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent(InsideShoppingListActivity.this, MainScreenActivity.class);
-            startActivity(intent);
+            createAndShowAlertDialog();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     * Method <code>createAndShowAlertDialog</code> creates and displays an alert dialog. Dialog
+     * reminding the user that he forgot to buy.
+     */
+    private void createAndShowAlertDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.are_you_forgot);
+        final List<Product> topFiveProducts = productDAO.getTopFiveProducts(products);
+        final String[] productsNames = new String[5];
+        for (int i = 0; i < productsNames.length; i++) {
+            productsNames[i] = topFiveProducts.get(i).getName();
+        }
+        final boolean[] state = {false, false, false, false, false};
+        builder.setMultiChoiceItems(productsNames, null,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        Toast.makeText(getApplicationContext(), productsNames[which],
+                                Toast.LENGTH_SHORT).show();
+                        state[which] = isChecked;
+                    }
+                });
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.add_selected_products,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i < 5; i++) {
+                            if (state[i]) {
+                                productDAO.assignProductToShoppingList(shoppingListId,
+                                        topFiveProducts.get(i).getId());
+                            }
+                        }
+                        Intent intent = new Intent(InsideShoppingListActivity.this,
+                                MainScreenActivity.class);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                });
+
+        builder.setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(InsideShoppingListActivity.this,
+                        MainScreenActivity.class);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

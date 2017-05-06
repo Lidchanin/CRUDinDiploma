@@ -25,7 +25,7 @@
         android:layout_marginStart="21dp"
         android:ems="10"
         android:inputType="text"
-        android:hint="@string/inside_shopping_list_add_product_edit_text_name_product_in_pop_up_window"
+        android:hint="@string/enter_name"
         android:layout_below="@+id/inside_shopping_list_add_product_pop_up_window_image_button_close"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -40,7 +40,7 @@
         android:layout_marginTop="15dp"
         android:ems="10"
         android:inputType="numberDecimal"
-        android:hint="@string/inside_shopping_list_add_product_edit_text_cost_product_in_pop_up_window"/>
+        android:hint="@string/enter_cost"/>
 
     <ImageButton
         android:id="@+id/inside_shopping_list_add_product_pop_up_window_image_button_add"

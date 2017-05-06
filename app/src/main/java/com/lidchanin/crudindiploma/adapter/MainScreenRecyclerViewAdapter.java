@@ -1,7 +1,9 @@
 package com.lidchanin.crudindiploma.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -72,13 +74,7 @@ public class MainScreenRecyclerViewAdapter
         holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("MY_LOG", String.valueOf(holder.getAdapterPosition()));
-                ShoppingListDAO shoppingListDAO = new ShoppingListDAO(context);
-                shoppingListDAO.delete(shoppingLists.get(holder.getAdapterPosition()));
-                // FIXME: 12.04.2017 doing something with this shit code!!!
-                Intent intent = new Intent(context, MainScreenActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                createAndShowAlertDialog(holder.getAdapterPosition());
             }
         });
     }
@@ -86,6 +82,38 @@ public class MainScreenRecyclerViewAdapter
     @Override
     public int getItemCount() {
         return shoppingLists.size();
+    }
+
+    /**
+     * Method <code>createAndShowAlertDialog</code> create and shows a dialog, which need to
+     * confirm deleting shopping list.
+     *
+     * @param adapterPosition is the position, where record about shopping list are located.
+     */
+    private void createAndShowAlertDialog(final int adapterPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_shopping_list);
+        builder.setMessage(R.string.you_are_sure_you_want_to_delete_this_shopping_list);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ShoppingListDAO shoppingListDAO = new ShoppingListDAO(context);
+                shoppingListDAO.delete(shoppingLists.get(adapterPosition));
+                // FIXME: 12.04.2017 doing something with this shit code!!!
+                Intent intent = new Intent(context, MainScreenActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     /**

@@ -71,9 +71,11 @@ public class ShoppingListDAO extends DatabaseDAO {
      * @return needed shopping list.
      */
     public ShoppingList getOne(long shoppingListId) {
-        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME}, WHERE_ID_EQUALS,
-                new String[]{String.valueOf(shoppingListId)}, null, null, null, String.valueOf(1));
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME};
+        String[] selectionArgs = {String.valueOf(shoppingListId)};
+        String limit = String.valueOf(1);
+        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS, columns,
+                WHERE_ID_EQUALS, selectionArgs, null, null, null, limit);
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setId(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)));
         shoppingList.setName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)));
@@ -88,8 +90,8 @@ public class ShoppingListDAO extends DatabaseDAO {
      */
     public List<ShoppingList> getAll() {
         List<ShoppingList> shoppingLists = new ArrayList<>();
-        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME}, null, null,
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME};
+        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS, columns, null, null,
                 null, null, null);
         if (cursor.moveToFirst()) {
             do {
@@ -104,8 +106,8 @@ public class ShoppingListDAO extends DatabaseDAO {
     }
 
     /**
-     * Method <code>deleteRelationships</code> need to deleteInDatabase relationships, i.e. deleteInDatabase all
-     * products from the current shopping list.
+     * Method <code>deleteRelationships</code> need to deleteInDatabase relationships, i.e.
+     * delete in database all products from the current shopping list.
      *
      * @param shoppingListId is the current shopping list id.
      */

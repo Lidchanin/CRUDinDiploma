@@ -1,11 +1,26 @@
 <resources>
     <string name="app_name">CRUDinDiploma</string>
-    <string name="main_screen_button_add_shopping_list">Add new shopping list</string>
-    <string name="adding_shopping_list_button_add_shopping_list">Save list with current name</string>
-    <string name="adding_shopping_list_exit_text_enter_shopping_list_name">Enter shopping list name</string>
-    <string name="inside_shopping_list_add_product_edit_text_name_product_in_pop_up_window">Enter name</string>
-    <string name="inside_shopping_list_add_product_edit_text_cost_product_in_pop_up_window">Enter cost</string>
-    <string name="inside_shopping_list_update_product_edit_text_name_product_in_pop_up_window">Enter name</string>
-    <string name="inside_shopping_list_update_product_edit_text_cost_product_in_pop_up_window">Enter cost</string>
-    <string name="main_screen_edit_text_name_shopping_list_in_pop_up_window">Enter new name</string>
+
+    <string name="add_a_new_shopping_list">Add a new shopping list</string>
+    <string name="save_shopping_list_with_current_name">
+        Save shopping list with current name
+    </string>
+    <string name="enter_name_of_the_shopping_list">Enter name of the shopping list</string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_cost">Enter cost</string>
+    <string name="enter_new_name">Enter new name</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_shopping_list">Delete shopping list?</string>
+    <string name="you_are_sure_you_want_to_delete_this_shopping_list">
+        You are sure you want to delete this shopping list?
+    </string>
+    <string name="delete_product">Delete product?</string>
+    <string name="you_are_sure_you_want_to_delete_this_product">
+        You are sure you want to delete this product?
+    </string>
+    <string name="are_you_forgot">Are you forgot?</string>
+    <string name="add_selected_products">Add selected products</string>
+    <string name="no_thanks">No, thanks</string>
+
 </resources>

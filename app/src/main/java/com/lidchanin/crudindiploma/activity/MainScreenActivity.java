@@ -99,7 +99,7 @@ public class MainScreenActivity extends AppCompatActivity {
      */
     private void initializeAdapters() {
         MainScreenRecyclerViewAdapter adapter
-                = new MainScreenRecyclerViewAdapter(shoppingLists, getApplicationContext());
+                = new MainScreenRecyclerViewAdapter(shoppingLists, this);
         recyclerViewAllShoppingLists.setAdapter(adapter);
     }
 

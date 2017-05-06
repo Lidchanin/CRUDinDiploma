@@ -3,6 +3,7 @@ package com.lidchanin.crudindiploma.data.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
@@ -13,7 +14,8 @@ import java.util.List;
 
 /**
  * Class <code>ProductDAO</code> extends {@link DatabaseDAO} and implements database operations
- * such as add, update, deleteInDatabase, get {@link com.lidchanin.crudindiploma.data.model.Product}.
+ * such as add, update, deleteInDatabase, get
+ * {@link com.lidchanin.crudindiploma.data.model.Product}.
  *
  * @author Lidchanin
  */
@@ -35,11 +37,12 @@ public class ProductDAO extends DatabaseDAO {
      * @return product, which you need, or null.
      */
     public Product getOneById(long productId) {
-        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
-                        DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY},
-                WHERE_ID_EQUALS,
-                new String[]{String.valueOf(productId)}, null, null, null, String.valueOf(1));
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
+                DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY};
+        String[] selectionArgs = {String.valueOf(productId)};
+        String limit = String.valueOf(1);
+        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS, columns,
+                WHERE_ID_EQUALS, selectionArgs, null, null, null, limit);
         if (cursor.moveToFirst()) {
             Product product = new Product();
             product.setId(cursor.getLong(0));
@@ -61,11 +64,12 @@ public class ProductDAO extends DatabaseDAO {
      * @return product, which you need, or null.
      */
     public Product getOneByName(String productName) {
-        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
-                        DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY},
-                WHERE_NAME_EQUALS,
-                new String[]{String.valueOf(productName)}, null, null, null, String.valueOf(1));
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
+                DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY};
+        String[] selectionArgs = {productName};
+        String limit = String.valueOf(1);
+        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS, columns, WHERE_NAME_EQUALS,
+                selectionArgs, null, null, null, limit);
         if (cursor.moveToFirst()) {
             Product product = new Product();
             product.setId(cursor.getLong(0));
@@ -87,9 +91,9 @@ public class ProductDAO extends DatabaseDAO {
      */
     public List<Product> getAll() {
         List<Product> products = new ArrayList<>();
-        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
-                        DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY}, null, null,
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
+                DatabaseHelper.COLUMN_COST, DatabaseHelper.COLUMN_POPULARITY};
+        Cursor cursor = database.query(DatabaseHelper.TABLE_PRODUCTS, columns, null, null,
                 null, null, null);
         while (cursor.moveToNext()) {
             Product product = new Product();
@@ -128,11 +132,42 @@ public class ProductDAO extends DatabaseDAO {
                 product.setName(cursor.getString(1));
                 product.setCost(cursor.getDouble(2));
                 product.setPopularity(cursor.getLong(3));
-                Log.d("MY_LOG '", "_________product id:" + product.getId()
-                        + "\t\tname:" + product.getName()
-                        + "\t\tcost:" + product.getCost()
-                        + "\t\tpopularity:" + product.getPopularity()
-                );
+                products.add(product);
+            } while (cursor.moveToNext());
+            cursor.close();
+            return products;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
+    /**
+     * Method <code>getTopFiveProducts</code> gets five products that are most popular from the
+     * database without already existed products.
+     *
+     * @param existedProducts are products that exist in the shopping list.
+     * @return five products or null.
+     */
+    public List<Product> getTopFiveProducts(List<Product> existedProducts) {
+        List<Product> products = new ArrayList<>();
+        String[] existedProductsIdsArray = new String[existedProducts.size()];
+        for (int i = 0; i < existedProductsIdsArray.length; i++) {
+            existedProductsIdsArray[i] = String.valueOf(existedProducts.get(i).getId());
+        }
+        String existedProductsIds = TextUtils.join(", ", existedProductsIdsArray);
+        String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_PRODUCTS
+                + " WHERE " + DatabaseHelper.COLUMN_ID + "  NOT IN (" + existedProductsIds + ")"
+                + " ORDER BY " + DatabaseHelper.COLUMN_POPULARITY + " DESC"
+                + " LIMIT 5";
+        Cursor cursor = database.rawQuery(selectQuery, new String[0]);
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product();
+                product.setId(cursor.getLong(0));
+                product.setName(cursor.getString(1));
+                product.setCost(cursor.getDouble(2));
+                product.setPopularity(cursor.getLong(3));
                 products.add(product);
             } while (cursor.moveToNext());
             cursor.close();
@@ -168,12 +203,9 @@ public class ProductDAO extends DatabaseDAO {
             Log.i("MY_LOG " + ProductDAO.class.getSimpleName(), "Product is already exist.");
             product.setId(existedProduct.getId());
             product.setPopularity(existedProduct.getPopularity() + 1);
-            Log.d("MY_LOG", existedProduct.getId() + "\t" + existedProduct.getName() + "\t" + existedProduct.getCost() + "\t" + existedProduct.getPopularity());
-            Log.d("MY_LOG", product.getId() + "\t" + product.getName() + "\t" + product.getCost() + "\t" + product.getPopularity());
             productId = product.getId();
             update(product);
             if (!isExistRelationship(shoppingListId, productId)) {
-                Log.d("MY_LOG", "create relationship");
                 assignProductToShoppingList(shoppingListId, productId);
             }
         }
@@ -223,7 +255,7 @@ public class ProductDAO extends DatabaseDAO {
      * @param shoppingListId is the shopping list id.
      * @param productId      is the product id, which you want to assign to shopping list.
      */
-    private void assignProductToShoppingList(long shoppingListId, long productId) {
+    public void assignProductToShoppingList(long shoppingListId, long productId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.COLUMN_LIST_ID, shoppingListId);
         contentValues.put(DatabaseHelper.COLUMN_PRODUCT_ID, productId);

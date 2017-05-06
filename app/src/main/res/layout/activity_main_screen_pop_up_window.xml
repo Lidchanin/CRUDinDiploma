@@ -25,7 +25,7 @@
         android:layout_marginStart="21dp"
         android:ems="10"
         android:inputType="text"
-        android:hint="@string/main_screen_edit_text_name_shopping_list_in_pop_up_window"
+        android:hint="@string/enter_new_name"
         android:layout_below="@+id/main_screen_image_button_close_in_pop_up_window"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

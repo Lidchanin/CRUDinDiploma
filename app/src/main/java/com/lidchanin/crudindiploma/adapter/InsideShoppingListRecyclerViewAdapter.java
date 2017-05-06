@@ -1,15 +1,17 @@
 package com.lidchanin.crudindiploma.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.activity.InsideShoppingListActivity;
@@ -54,13 +56,7 @@ public class InsideShoppingListRecyclerViewAdapter
         holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProductDAO productDAO = new ProductDAO(context);
-                productDAO.delete(shoppingListId, products.get(holder.getAdapterPosition()).getId());
-                // FIXME: 12.04.2017 Doing something with this shit code!
-                Intent intent = new Intent(context, InsideShoppingListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("shoppingListId", shoppingListId);
-                context.startActivity(intent);
+                createAndShowAlertDialog(holder.getAdapterPosition());
             }
         });
         holder.cardViewProduct.setOnLongClickListener(new View.OnLongClickListener() {
@@ -81,6 +77,37 @@ public class InsideShoppingListRecyclerViewAdapter
         return products.size();
     }
 
+    /**
+     * Method <code>createAndShowAlertDialog</code> create and shows a dialog, which need to
+     * confirm deleting product.
+     *
+     * @param adapterPosition is the position, where record about product are located.
+     */
+    private void createAndShowAlertDialog(final int adapterPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete_product);
+        builder.setMessage(R.string.you_are_sure_you_want_to_delete_this_product);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ProductDAO productDAO = new ProductDAO(context);
+                productDAO.delete(shoppingListId, products.get(adapterPosition).getId());
+                // FIXME: 12.04.2017 Doing something with this shit code!
+                Intent intent = new Intent(context, InsideShoppingListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("shoppingListId", shoppingListId);
+                context.startActivity(intent);
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     /**
      * Class <code>InsideShoppingListViewHolder</code> is the View Holder for
@@ -99,12 +126,12 @@ public class InsideShoppingListRecyclerViewAdapter
             super(itemView);
             cardViewProduct = (CardView)
                     itemView.findViewById(R.id.inside_shopping_list_card_view);
-            textViewProductName = (TextView)
-                    itemView.findViewById(R.id.inside_shopping_list_text_view_product_name_in_card_view);
-            textViewProductCost = (TextView)
-                    itemView.findViewById(R.id.inside_shopping_list_text_view_product_cost_in_card_view);
-            imageButtonDelete = (ImageButton)
-                    itemView.findViewById(R.id.inside_shopping_list_image_button_delete_in_card_view);
+            textViewProductName = (TextView) itemView.
+                    findViewById(R.id.inside_shopping_list_text_view_product_name_in_card_view);
+            textViewProductCost = (TextView) itemView.
+                    findViewById(R.id.inside_shopping_list_text_view_product_cost_in_card_view);
+            imageButtonDelete = (ImageButton) itemView
+                    .findViewById(R.id.inside_shopping_list_image_button_delete_in_card_view);
         }
     }
 }

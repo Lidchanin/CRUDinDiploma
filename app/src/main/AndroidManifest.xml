@@ -12,20 +12,25 @@
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainScreenActivity" />
+        <activity
+            android:name=".activity.MainScreenActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.AddingShoppingListActivity" />
         <activity
             android:name=".activity.InsideShoppingListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.InsideShoppingListAddProductPopUpWindowActivity"
-            android:theme="@style/AppTheme.PopupWindowInsideShoppingList" />
-        <activity android:name=".activity.MainScreenPopUpWindowActivity" />
-        <activity android:name=".activity.InsideShoppingListUpdateProductPopUpWindowActivity"></activity>
+            android:theme="@style/AppTheme.PopUpWindow" />
+        <activity
+            android:name=".activity.MainScreenPopUpWindowActivity"
+            android:theme="@style/AppTheme.PopUpWindow" />
+        <activity
+            android:name=".activity.InsideShoppingListUpdateProductPopUpWindowActivity"
+            android:theme="@style/AppTheme.PopUpWindow" />
     </application>
 
 </manifest>
