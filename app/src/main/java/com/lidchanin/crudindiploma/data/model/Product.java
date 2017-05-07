@@ -32,6 +32,19 @@ public class Product {
     }
 
     /**
+     * Constructor for create a product with name? cost and popularity.
+     *
+     * @param name       is the product name.
+     * @param cost       is the product cost.
+     * @param popularity is the product popularity.
+     */
+    public Product(String name, double cost, long popularity) {
+        this.name = name;
+        this.cost = cost;
+        this.popularity = popularity;
+    }
+
+    /**
      * Constructor for create a product with id, name and cost.
      *
      * @param id   is the product id.
@@ -42,6 +55,21 @@ public class Product {
         this.id = id;
         this.name = name;
         this.cost = cost;
+    }
+
+    /**
+     * Constructor for create a product with id, name, cost and popularity.
+     *
+     * @param id         is the product id.
+     * @param name       is the product name.
+     * @param cost       is the product cost.
+     * @param popularity is the product popularity.
+     */
+    public Product(long id, String name, double cost, long popularity) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+        this.popularity = popularity;
     }
 
     // getters and setters
