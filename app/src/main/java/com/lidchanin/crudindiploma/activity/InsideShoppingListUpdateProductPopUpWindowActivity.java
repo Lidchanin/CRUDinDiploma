@@ -69,9 +69,13 @@ public class InsideShoppingListUpdateProductPopUpWindowActivity extends AppCompa
     private void initializeButtons(final long shoppingListId, final long productId) {
         editTextName = (EditText) findViewById(
                 R.id.inside_shopping_list_update_product_pop_up_window_edit_text_product_name);
+        String previousName = productDAO.getOneById(productId).getName();
+        editTextName.setText(previousName);
 
         editTextCost = (EditText) findViewById(
                 R.id.inside_shopping_list_update_product_pop_up_window_edit_text_product_cost);
+        String previousCost = String.valueOf(productDAO.getOneById(productId).getCost());
+        editTextCost.setText(previousCost);
 
         ImageButton closeButton = (ImageButton) findViewById(
                 R.id.inside_shopping_list_update_product_pop_up_window_image_button_close);

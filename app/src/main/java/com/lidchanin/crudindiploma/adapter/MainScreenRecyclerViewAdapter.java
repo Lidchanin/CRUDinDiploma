@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import java.util.List;
 /**
  * Class <code>MainScreenRecyclerViewAdapter</code> is an adapter for {@link RecyclerView} from
  * {@link com.lidchanin.crudindiploma.activity.MainScreenActivity}. This class extends
- * {@link android.support.v7.widget.RecyclerView.Adapter}
+ * {@link android.support.v7.widget.RecyclerView.Adapter}.
  *
  * @author Lidchanin
  * @see android.support.v7.widget.RecyclerView.Adapter

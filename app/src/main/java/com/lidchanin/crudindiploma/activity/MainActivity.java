@@ -1,6 +1,7 @@
 package com.lidchanin.crudindiploma.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,11 +19,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    final static public String PREFS_NAME = "PREFS_NAME";
+    final static private String PREF_KEY_SHORTCUT_ADDED = "PREF_KEY_SHORTCUT_ADDED";
     private Button buttonGoToApp;
     private Button buttonShowLists;
     private Button buttonShowProducts;
     private Button buttonShowRelationship;
-
     private DatabaseHelper databaseHelper;
     private ShoppingListDAO shoppingListDAO;
     private ProductDAO productDAO;
@@ -85,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        createShortcutIcon();
     }
 
     @Override
@@ -99,5 +103,31 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         shoppingListDAO.close();
         productDAO.close();
+    }
+
+    /**
+     * Method <code>createShortcutIcon</code> creates shortcut icon on users mobile desktop.
+     */
+    private void createShortcutIcon() {
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        boolean shortCutWasAlreadyAdded = sharedPreferences
+                .getBoolean(PREF_KEY_SHORTCUT_ADDED, false);
+        if (shortCutWasAlreadyAdded)
+            return;
+        Intent shortcutIntent = new Intent(getApplicationContext(), MainActivity.class);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.shortcut_name));
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource
+                .fromContext(getApplicationContext(), R.mipmap.ic_launcher_round));
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        getApplicationContext().sendBroadcast(addIntent);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(PREF_KEY_SHORTCUT_ADDED, true);
+        editor.apply();
     }
 }

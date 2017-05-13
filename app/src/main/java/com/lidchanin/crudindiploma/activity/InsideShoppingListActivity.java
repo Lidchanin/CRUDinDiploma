@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.lidchanin.crudindiploma.data.dao.ProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
 import com.lidchanin.crudindiploma.data.model.Product;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +41,8 @@ public class InsideShoppingListActivity extends AppCompatActivity {
     private ShoppingListDAO shoppingListDAO;
     private ProductDAO productDAO;
 
+    private Double costsSum = 0.0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +57,8 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         shoppingListDAO = new ShoppingListDAO(this);
         productDAO = new ProductDAO(this);
 
-        initializeViewsAndButtons(shoppingListId);
         initializeData(shoppingListId);
+        initializeViewsAndButtons(shoppingListId);
         initializeRecyclerViews();
         initializeAdapters();
     }
@@ -85,6 +87,10 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         products = productDAO.getAllFromCurrentShoppingList(shoppingListId);
         if (products == null) {
             products = new ArrayList<>();
+        } else {
+            for (int i = 0; i < products.size(); i++) {
+                costsSum += products.get(i).getCost();
+            }
         }
     }
 
@@ -107,10 +113,15 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        // FIXME: 04.05.2017 delete or doing something with textView
+        String shoppingListName = shoppingListDAO.getOne(shoppingListId).getName();
         TextView textViewShoppingListName = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
-        textViewShoppingListName.setText("id = " + String.valueOf(shoppingListId));
+        textViewShoppingListName.setText(shoppingListName);
+
+        TextView textViewCostsSum = (TextView)
+                findViewById(R.id.inside_shopping_list_text_view_products_costs_sum);
+        textViewCostsSum.setText(getString(R.string.estimated_amount,
+                new DecimalFormat("#.##").format(costsSum)));
     }
 
     /**

@@ -224,7 +224,7 @@ public class ProductDAO extends DatabaseDAO {
         contentValues.put(DatabaseHelper.COLUMN_COST, product.getCost());
         contentValues.put(DatabaseHelper.COLUMN_POPULARITY, product.getPopularity());
         return database.update(DatabaseHelper.TABLE_PRODUCTS, contentValues,
-                DatabaseHelper.COLUMN_ID + " =?", new String[]{String.valueOf(product.getId())});
+                WHERE_ID_EQUALS, new String[]{String.valueOf(product.getId())});
     }
 
     /**

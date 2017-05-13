@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
-import com.lidchanin.crudindiploma.data.model.Product;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
 public class MainScreenPopUpWindowActivity extends AppCompatActivity {
@@ -66,9 +65,6 @@ public class MainScreenPopUpWindowActivity extends AppCompatActivity {
      * @param shoppingListId is the current shopping list id.
      */
     private void initializeButtons(final long shoppingListId) {
-        editTextName = (EditText)
-                findViewById(R.id.main_screen_edit_text_shopping_list_name_in_pop_up_window);
-
         ImageButton closeButton = (ImageButton)
                 findViewById(R.id.main_screen_image_button_close_in_pop_up_window);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +76,11 @@ public class MainScreenPopUpWindowActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        editTextName = (EditText)
+                findViewById(R.id.main_screen_edit_text_shopping_list_name_in_pop_up_window);
+        String previousName = shoppingListDAO.getOne(shoppingListId).getName();
+        editTextName.setText(previousName);
 
         ImageButton imageButtonConfirm = (ImageButton)
                 findViewById(R.id.main_screen_image_button_confirm_in_pop_up_window);

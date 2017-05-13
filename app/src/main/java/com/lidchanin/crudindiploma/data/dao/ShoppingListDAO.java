@@ -76,11 +76,16 @@ public class ShoppingListDAO extends DatabaseDAO {
         String limit = String.valueOf(1);
         Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS, columns,
                 WHERE_ID_EQUALS, selectionArgs, null, null, null, limit);
-        ShoppingList shoppingList = new ShoppingList();
-        shoppingList.setId(cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID)));
-        shoppingList.setName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_NAME)));
-        cursor.close();
-        return shoppingList;
+        if (cursor.moveToFirst()) {
+            ShoppingList shoppingList = new ShoppingList();
+            shoppingList.setId(cursor.getLong(0));
+            shoppingList.setName(cursor.getString(1));
+            cursor.close();
+            return shoppingList;
+        } else {
+            cursor.close();
+            return null;
+        }
     }
 
     /**
@@ -126,9 +131,12 @@ public class ShoppingListDAO extends DatabaseDAO {
         if ((cursor.moveToFirst())) {
             do {
                 Long[] relationship = new Long[3];
-                relationship[0] = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
-                relationship[1] = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_LIST_ID));
-                relationship[2] = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_PRODUCT_ID));
+                relationship[0]
+                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
+                relationship[1]
+                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_LIST_ID));
+                relationship[2]
+                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_PRODUCT_ID));
                 relationships.add(relationship);
             } while (cursor.moveToNext());
             cursor.close();

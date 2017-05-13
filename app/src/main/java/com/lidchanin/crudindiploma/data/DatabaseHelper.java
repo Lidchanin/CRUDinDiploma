@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.data.model.Product;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static DatabaseHelper instance;
 
+    private Context context;
+
     /**
      * Simple constructor for create <code>DatabaseHelper</code> exemplar.
      *
@@ -60,6 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static synchronized DatabaseHelper getHelper(Context context) {
@@ -81,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SHOPPING_LISTS);
         db.execSQL(CREATE_TABLE_PRODUCTS);
         db.execSQL(CREATE_TABLE_SHOPPING_LISTS_PRODUCTS);
-        loadDefaultProductsENG(db);
+        loadDefaultProducts(db);
     }
 
     @Override
@@ -93,63 +97,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Method <code>loadDefaultProductsENG</code> loads products into the database.
+     * Method <code>loadDefaultProducts</code> loads products into the database.
      *
      * @param db is the SQLite database.
      */
-    private void loadDefaultProductsENG(SQLiteDatabase db) {
-        List<Product> defaultProductsENG = defaultProductsENG();
-        for (int i = 0; i < defaultProductsENG.size(); i++) {
+    private void loadDefaultProducts(SQLiteDatabase db) {
+        List<Product> defaultProducts = defaultProducts();
+        for (int i = 0; i < defaultProducts.size(); i++) {
             ContentValues contentValues = new ContentValues();
             contentValues.put(DatabaseHelper.COLUMN_NAME,
-                    defaultProductsENG.get(i).getName());
+                    defaultProducts.get(i).getName());
             contentValues.put(DatabaseHelper.COLUMN_COST,
-                    defaultProductsENG.get(i).getCost());
+                    defaultProducts.get(i).getCost());
             contentValues.put(DatabaseHelper.COLUMN_POPULARITY,
-                    defaultProductsENG.get(i).getPopularity());
+                    defaultProducts.get(i).getPopularity());
             db.insert(DatabaseHelper.TABLE_PRODUCTS, null, contentValues);
         }
     }
 
     /**
-     * Method <code>defaultProductsENG</code> fills the list with products. (ENG)
+     * Method <code>defaultProducts</code> fills the list with products.
      *
      * @return default products list.
      */
-    private List<Product> defaultProductsENG() {
+    private List<Product> defaultProducts() {
         List<Product> defaultProducts = new ArrayList<>();
-        defaultProducts.add(new Product("potatoes", 0, 3));
-        defaultProducts.add(new Product("cabbages", 0, 2));
-        defaultProducts.add(new Product("carrots", 0, 2));
-        defaultProducts.add(new Product("tomatoes", 0, 2));
-        defaultProducts.add(new Product("cucumbers", 0, 2));
-        defaultProducts.add(new Product("garlics", 0, 2));
-        defaultProducts.add(new Product("onions", 0, 2));
-        defaultProducts.add(new Product("beetroots", 0, 2));
-        defaultProducts.add(new Product("apples", 0, 2));
-        defaultProducts.add(new Product("bananas", 0, 2));
-        defaultProducts.add(new Product("oranges", 0, 2));
-        defaultProducts.add(new Product("lemons", 0, 2));
-        defaultProducts.add(new Product("butter", 0, 2));
-        defaultProducts.add(new Product("milk", 0, 2));
-        defaultProducts.add(new Product("fish", 0, 2));
-        defaultProducts.add(new Product("peas", 0, 2));
-        defaultProducts.add(new Product("corn", 0, 2));
-        defaultProducts.add(new Product("mushrooms", 0, 2));
-        defaultProducts.add(new Product("meat", 0, 3));
-        defaultProducts.add(new Product("spaghetti", 0, 3));
-        defaultProducts.add(new Product("pork", 0, 2));
-        defaultProducts.add(new Product("beef", 0, 2));
-        defaultProducts.add(new Product("rice", 0, 2));
-        defaultProducts.add(new Product("buckwheat", 0, 2));
-        defaultProducts.add(new Product("mustard", 0, 2));
-        defaultProducts.add(new Product("eggs", 0, 2));
-        defaultProducts.add(new Product("sugar", 0, 2));
-        defaultProducts.add(new Product("salt", 0, 2));
-        defaultProducts.add(new Product("coffee", 0, 2));
-        defaultProducts.add(new Product("black tea", 0, 2));
-        defaultProducts.add(new Product("green tea", 0, 2));
-        defaultProducts.add(new Product("cocoa", 0, 2));
+        defaultProducts.add(new Product(context.getString(R.string.potatoes), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.cabbage), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.carrot), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.tomatoes), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.cucumbers), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.garlic), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.onion), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.beetroot), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.apples), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.bananas), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.oranges), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.lemons), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.butter), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.olive_oil), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.sunflower_oil), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.milk), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.fish), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.peas), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.corn), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.mushrooms), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.chicken_meat), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.pork), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.beef), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.spaghetti), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.rice), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.buckwheat), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.mustard), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.eggs), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.sugar), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.salt), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.coffee), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.black_tea), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.green_tea), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.red_tea), 0, 0));
+        defaultProducts.add(new Product(context.getString(R.string.cocoa), 0, 0));
         return defaultProducts;
     }
 }
