@@ -18,6 +18,7 @@
     <string name="add_selected_products">Add selected products</string>
     <string name="no_thanks">No, thanks</string>
     <string name="estimated_amount">Estimated amount = %1$s</string>
+    <string name="quantity">quantity</string>
 
     <string name="potatoes">potatoes</string>
     <string name="cabbage">cabbage</string>

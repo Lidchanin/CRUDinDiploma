@@ -17,7 +17,7 @@
                 android:id="@+id/inside_shopping_list_text_view_product_name_in_card_view"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:textSize="18sp" />
 
             <TextView
@@ -27,11 +27,29 @@
                 android:layout_weight="1"
                 android:textSize="18sp" />
 
+            <EditText
+                android:id="@+id/inside_shopping_list_edit_text_quantity_of_product_in_card_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="numberDecimal"
+                android:hint="@string/quantity"/>
+
+            <ImageButton
+                android:id="@+id/inside_shopping_list_image_button_accept_in_card_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_check_black_24dp"
+                android:contentDescription="@string/quantity"/>
+
             <ImageButton
                 android:id="@+id/inside_shopping_list_image_button_delete_in_card_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_close_black_24dp" />
+                android:layout_weight="1"
+                android:src="@drawable/ic_close_black_24dp"
+                android:contentDescription="@string/delete_product" />
 
         </LinearLayout>
 

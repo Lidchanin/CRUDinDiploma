@@ -72,7 +72,6 @@ public class AddingShoppingListActivity extends AppCompatActivity {
                     intent.putExtra("shoppingListId", shoppingListId);
                     startActivity(intent);
                 } else {
-                    // FIXME: 07.04.2017 do something with Toast
                     Toast.makeText(getApplicationContext(), "Uncorrected name!", Toast.LENGTH_SHORT)
                             .show();
                 }

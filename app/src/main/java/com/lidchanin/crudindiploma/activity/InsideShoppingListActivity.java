@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -34,14 +35,15 @@ import java.util.List;
 public class InsideShoppingListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewAllProducts;
+    private TextView textViewCostsSum;
 
     private List<Product> products;
     private long shoppingListId;
+    private double[] quantities;
+    private double costsSum = 0;
 
     private ShoppingListDAO shoppingListDAO;
     private ProductDAO productDAO;
-
-    private Double costsSum = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,11 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         }
 
         shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
+        quantities = getIntent().getDoubleArrayExtra("quantities");
+        if (quantities != null)
+            for (int i = 0; i < quantities.length; i++) {
+                Log.d("MY_LOG", "q = " + quantities[i]);
+            }
 
         shoppingListDAO = new ShoppingListDAO(this);
         productDAO = new ProductDAO(this);
@@ -61,6 +68,12 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         initializeViewsAndButtons(shoppingListId);
         initializeRecyclerViews();
         initializeAdapters();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -118,7 +131,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
         textViewShoppingListName.setText(shoppingListName);
 
-        TextView textViewCostsSum = (TextView)
+        textViewCostsSum = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_products_costs_sum);
         textViewCostsSum.setText(getString(R.string.estimated_amount,
                 new DecimalFormat("#.##").format(costsSum)));
@@ -191,7 +204,6 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
         builder.setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

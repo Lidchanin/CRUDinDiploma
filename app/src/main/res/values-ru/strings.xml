@@ -18,6 +18,7 @@
     <string name="no_thanks">Нет, спасибо</string>
     <string name="estimated_amount">Приблизительная стоимость = %1$s</string>
     <string name="you_are_sure_you_want_to_delete_this_shopping_list">Вы уверены, что хотите удалить этот список покупок?</string>
+    <string name="quantity">количество</string>
 
     <string name="potatoes">картофель</string>
     <string name="cabbage">капуста</string>
