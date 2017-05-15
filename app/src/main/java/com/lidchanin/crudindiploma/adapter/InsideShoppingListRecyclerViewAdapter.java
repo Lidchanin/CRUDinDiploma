@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.lidchanin.crudindiploma.R;
-import com.lidchanin.crudindiploma.activity.InsideShoppingListActivity;
 import com.lidchanin.crudindiploma.activity.InsideShoppingListUpdateProductPopUpWindowActivity;
+import com.lidchanin.crudindiploma.data.dao.ExistingProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ProductDAO;
+import com.lidchanin.crudindiploma.data.model.ExistingProduct;
 import com.lidchanin.crudindiploma.data.model.Product;
+import com.lidchanin.crudindiploma.filter.DecimalDigitsInputFilter;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -32,21 +36,20 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
         .Adapter<InsideShoppingListRecyclerViewAdapter.InsideShoppingListViewHolder> {
 
     private List<Product> products;
-    private double[] quantities;
+    private List<ExistingProduct> existingProducts;
     private long shoppingListId;
     private Context context;
     private ProductDAO productDAO;
+    private ExistingProductDAO existingProductDAO;
 
-    public InsideShoppingListRecyclerViewAdapter(List<Product> products, Context context,
-                                                 long shoppingListId) {
+    public InsideShoppingListRecyclerViewAdapter(List<Product> products, List<ExistingProduct>
+            existingProducts, Context context, long shoppingListId) {
         this.products = products;
-        quantities = new double[products.size()];
-        for (int i = 0; i < products.size(); i++) {
-            quantities[i] = 1;
-        }
+        this.existingProducts = existingProducts;
         this.context = context;
         this.shoppingListId = shoppingListId;
         productDAO = new ProductDAO(context);
+        existingProductDAO = new ExistingProductDAO(context);
     }
 
     @Override
@@ -58,9 +61,16 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(final InsideShoppingListViewHolder holder, final int position) {
-        holder.textViewProductName.setText(products.get(position).getName());
-        holder.textViewProductCost.setText(String.valueOf(products.get(position).getCost()));
-        holder.editTextQuantity.setText(String.valueOf(quantities[holder.getAdapterPosition()]));
+        final Product product = products.get(holder.getAdapterPosition());
+        final ExistingProduct existingProduct = existingProducts.get(holder.getAdapterPosition());
+        if (existingProduct.getTotalCost() == 0.0) {
+            existingProduct.setTotalCost(product.getCost());
+        }
+        holder.textViewProductName.setText(product.getName());
+        holder.textViewProductCost.setText(new DecimalFormat("#0.00").format(product.getCost()));
+        holder.textViewTotalCost.setText(new DecimalFormat("#0.00")
+                .format(existingProduct.getTotalCost()));
+        holder.editTextQuantity.setText(String.valueOf(existingProduct.getQuantityOrWeight()));
         holder.imageButtonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +83,7 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
                 Intent intent = new Intent(context,
                         InsideShoppingListUpdateProductPopUpWindowActivity.class);
                 intent.putExtra("shoppingListId", shoppingListId);
-                intent.putExtra("productId", products.get(holder.getAdapterPosition()).getId());
+                intent.putExtra("productId", product.getId());
                 context.startActivity(intent);
                 return true;
             }
@@ -81,16 +91,12 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
         holder.imageButtonAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Product product = products.get(holder.getAdapterPosition());
-                double defCost = productDAO.getOneById(product.getId()).getCost();
-                quantities[holder.getAdapterPosition()]
-                        = Double.valueOf(holder.editTextQuantity.getText().toString());
-                product.setCost(defCost * quantities[holder.getAdapterPosition()]);
-                products.set(holder.getAdapterPosition(), product);
+                existingProduct.setQuantityOrWeight(Double
+                        .valueOf(holder.editTextQuantity.getText().toString()));
+                existingProduct
+                        .setTotalCost(product.getCost() * existingProduct.getQuantityOrWeight());
+                existingProductDAO.update(existingProduct);
                 notifyDataSetChanged();
-
-                Intent intent = new Intent(context, InsideShoppingListActivity.class);
-                intent.putExtra("quantities", quantities);
             }
         });
     }
@@ -141,6 +147,7 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
         private CardView cardViewProduct;
         private TextView textViewProductName;
         private TextView textViewProductCost;
+        private TextView textViewTotalCost;
         private EditText editTextQuantity;
         private ImageButton imageButtonAccept;
         private ImageButton imageButtonDelete;
@@ -153,8 +160,11 @@ public class InsideShoppingListRecyclerViewAdapter extends RecyclerView
                     findViewById(R.id.inside_shopping_list_text_view_product_name_in_card_view);
             textViewProductCost = (TextView) itemView.
                     findViewById(R.id.inside_shopping_list_text_view_product_cost_in_card_view);
+            textViewTotalCost = (TextView) itemView
+                    .findViewById(R.id.inside_shopping_list_text_view_total_cost_in_card_view);
             editTextQuantity = (EditText) itemView.findViewById(
                     R.id.inside_shopping_list_edit_text_quantity_of_product_in_card_view);
+            editTextQuantity.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(2, 2)});
             imageButtonAccept = (ImageButton) itemView
                     .findViewById(R.id.inside_shopping_list_image_button_accept_in_card_view);
             imageButtonDelete = (ImageButton) itemView

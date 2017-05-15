@@ -1,7 +1,7 @@
 package com.lidchanin.crudindiploma.data.model;
 
 /**
- * Class {@link Product} ia an entity. Product contains id, name, cost and
+ * Class <code>Product</code> is an entity. Product contains id, name, cost and
  * popularity.
  *
  * @author Lidchanin

@@ -3,6 +3,7 @@ package com.lidchanin.crudindiploma.data.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
@@ -10,12 +11,13 @@ import com.lidchanin.crudindiploma.data.model.ShoppingList;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.lidchanin.crudindiploma.data.DatabaseHelper.TABLE_EXISTING_PRODUCTS;
 import static com.lidchanin.crudindiploma.data.DatabaseHelper.TABLE_SHOPPING_LISTS;
-import static com.lidchanin.crudindiploma.data.DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS;
 
 /**
  * Class <code>ShoppingListDAO</code> extends {@link DatabaseDAO} and implements database operations
- * such as add, update, deleteInDatabase, get {@link com.lidchanin.crudindiploma.data.model.ShoppingList}.
+ * such as add, update, deleteInDatabase, get
+ * {@link com.lidchanin.crudindiploma.data.model.ShoppingList}.
  *
  * @author Lidchanin
  */
@@ -117,31 +119,8 @@ public class ShoppingListDAO extends DatabaseDAO {
      * @param shoppingListId is the current shopping list id.
      */
     private void deleteRelationships(long shoppingListId) {
-        database.delete(TABLE_SHOPPING_LISTS_PRODUCTS, WHERE_LIST_ID_EQUALS,
+        database.delete(TABLE_EXISTING_PRODUCTS, WHERE_LIST_ID_EQUALS,
                 new String[]{String.valueOf(shoppingListId)});
-    }
-
-    // FIXME: 11.04.2017 only for test
-    public List<Long[]> getAllRelationships() {
-        List<Long[]> relationships = new ArrayList<>();
-        Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS,
-                new String[]{DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_LIST_ID,
-                        DatabaseHelper.COLUMN_PRODUCT_ID},
-                null, null, null, null, null);
-        if ((cursor.moveToFirst())) {
-            do {
-                Long[] relationship = new Long[3];
-                relationship[0]
-                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_ID));
-                relationship[1]
-                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_LIST_ID));
-                relationship[2]
-                        = cursor.getLong(cursor.getColumnIndex(DatabaseHelper.COLUMN_PRODUCT_ID));
-                relationships.add(relationship);
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        return relationships;
     }
 
 }

@@ -10,24 +10,30 @@ import android.widget.Button;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
+import com.lidchanin.crudindiploma.data.dao.DatabaseDAO;
+import com.lidchanin.crudindiploma.data.dao.ExistingProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.ExistingProduct;
 import com.lidchanin.crudindiploma.data.model.Product;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static public String PREFS_NAME = "PREFS_NAME";
     final static private String PREF_KEY_SHORTCUT_ADDED = "PREF_KEY_SHORTCUT_ADDED";
+
     private Button buttonGoToApp;
     private Button buttonShowLists;
     private Button buttonShowProducts;
     private Button buttonShowRelationship;
+
     private DatabaseHelper databaseHelper;
     private ShoppingListDAO shoppingListDAO;
     private ProductDAO productDAO;
+    private ExistingProductDAO existingProductDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         shoppingListDAO = new ShoppingListDAO(this);
         productDAO = new ProductDAO(this);
+        existingProductDAO = new ExistingProductDAO(this);
 
         buttonGoToApp = (Button) findViewById(R.id.button_go_to_app);
         buttonGoToApp.setOnClickListener(new View.OnClickListener() {
@@ -78,12 +85,14 @@ public class MainActivity extends AppCompatActivity {
         buttonShowRelationship.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("MY_LOG", "__________Relationship__________");
-                List<Long[]> products = shoppingListDAO.getAllRelationships();
+                Log.d("MY_LOG", "__________ExistingProducts__________");
+                List<String[]> products = existingProductDAO.getAllExistingProducts();
                 for (int i = 0; i < products.size(); i++) {
-                    Log.d("MY_LOG", "\tid: " + products.get(i)[0]
-                            + ",\tlist: " + products.get(i)[1]
-                            + ",\tprod: " + products.get(i)[2]);
+                    Log.d("MY_LOG", "\n\tid: " + products.get(i)[0]
+                            + ",\tlist_id: " + products.get(i)[1]
+                            + ",\tprod_id: " + products.get(i)[2]
+                            + ",\tquantity: " + products.get(i)[3]
+                            + ",\ttotal_cost: " + products.get(i)[4]);
                 }
             }
         });
@@ -95,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         shoppingListDAO.open();
+        existingProductDAO.open();
         productDAO.open();
     }
 
@@ -102,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         shoppingListDAO.close();
+        existingProductDAO.close();
         productDAO.close();
     }
 

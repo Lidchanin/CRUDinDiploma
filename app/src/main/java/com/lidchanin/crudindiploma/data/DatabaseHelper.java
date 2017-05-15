@@ -21,36 +21,45 @@ import java.util.List;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static final int DATABASE_VERSION = 8;
+    private static final String DATABASE_NAME = "personal_shopping_lists";
+
     public static final String TABLE_SHOPPING_LISTS = "shopping_lists";
-    public static final String TABLE_SHOPPING_LISTS_PRODUCTS = "shopping_lists_products";
     public static final String TABLE_PRODUCTS = "products";
+    public static final String TABLE_EXISTING_PRODUCTS = "existing_products";
+
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_COST = "cost";
     public static final String COLUMN_POPULARITY = "popularity";
     public static final String COLUMN_LIST_ID = "list_id";
     public static final String COLUMN_PRODUCT_ID = "product_id";
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "personal_shopping_lists";
-    private static final String CREATE_TABLE_SHOPPING_LISTS = "CREATE TABLE " + TABLE_SHOPPING_LISTS
+    public static final String COLUMN_QUANTITY_OR_WEIGHT = "quantity_or_weight";
+    public static final String COLUMN_TOTAL_COST = "total_cost";
+
+    private static final String CREATE_TABLE_SHOPPING_LISTS
+            = "CREATE TABLE " + TABLE_SHOPPING_LISTS
             + "("
             + COLUMN_ID + " INTEGER PRIMARY KEY NOT NULL, "
             + COLUMN_NAME + " TEXT NOT NULL"
-            + ")";
-    private static final String CREATE_TABLE_PRODUCTS = "CREATE TABLE " + TABLE_PRODUCTS
+            + ");";
+    private static final String CREATE_TABLE_PRODUCTS
+            = "CREATE TABLE " + TABLE_PRODUCTS
             + "("
             + COLUMN_ID + " INTEGER PRIMARY KEY NOT NULL, "
             + COLUMN_NAME + " TEXT NOT NULL, "
             + COLUMN_COST + " REAL, "
             + COLUMN_POPULARITY + " INTEGER"
-            + ")";
-    private static final String CREATE_TABLE_SHOPPING_LISTS_PRODUCTS
-            = "CREATE TABLE " + TABLE_SHOPPING_LISTS_PRODUCTS
+            + ");";
+    private static final String CREATE_TABLE_EXISTED_PRODUCTS
+            = "CREATE TABLE " + TABLE_EXISTING_PRODUCTS
             + "("
             + COLUMN_ID + " INTEGER PRIMARY KEY NOT NULL, "
             + COLUMN_LIST_ID + " INTEGER REFERENCES " + TABLE_SHOPPING_LISTS + " (" + COLUMN_ID + "), "
-            + COLUMN_PRODUCT_ID + " INTEGER REFERENCES " + TABLE_PRODUCTS + " (" + COLUMN_ID + ")"
-            + ")";
+            + COLUMN_PRODUCT_ID + " INTEGER REFERENCES " + TABLE_PRODUCTS + " (" + COLUMN_ID + "), "
+            + COLUMN_QUANTITY_OR_WEIGHT + " REAL DEFAULT 1, "
+            + COLUMN_TOTAL_COST + " REAL"
+            + ");";
 
     private static DatabaseHelper instance;
 
@@ -84,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_SHOPPING_LISTS);
         db.execSQL(CREATE_TABLE_PRODUCTS);
-        db.execSQL(CREATE_TABLE_SHOPPING_LISTS_PRODUCTS);
+        db.execSQL(CREATE_TABLE_EXISTED_PRODUCTS);
         loadDefaultProducts(db);
     }
 
@@ -92,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOPPING_LISTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOPPING_LISTS_PRODUCTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXISTING_PRODUCTS);
         onCreate(db);
     }
 

@@ -15,7 +15,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         app:srcCompat="@drawable/ic_close_black_24dp"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/close" />
 
     <EditText
         android:id="@+id/inside_shopping_list_add_product_pop_up_window_edit_text_product_name"
@@ -46,13 +47,24 @@
         android:id="@+id/inside_shopping_list_add_product_pop_up_window_image_button_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
         app:srcCompat="@drawable/ic_add_shopping_cart_black_48dp"
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/add_product"
         android:layout_alignBottom="@+id/inside_shopping_list_add_product_pop_up_window_edit_text_product_cost"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        tools:ignore="VectorDrawableCompat" />
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_product"
+        android:layout_above="@+id/inside_shopping_list_add_product_pop_up_window_edit_text_product_name"
+        android:layout_alignLeft="@+id/inside_shopping_list_add_product_pop_up_window_edit_text_product_name"
+        android:layout_alignStart="@+id/inside_shopping_list_add_product_pop_up_window_edit_text_product_name"
+        android:layout_marginBottom="13dp" />
 
 </RelativeLayout>

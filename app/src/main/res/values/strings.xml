@@ -18,7 +18,17 @@
     <string name="add_selected_products">Add selected products</string>
     <string name="no_thanks">No, thanks</string>
     <string name="estimated_amount">Estimated amount = %1$s</string>
+    <string name="name">name</string>
+    <string name="cost">cost</string>
+    <string name="total">total</string>
     <string name="quantity">quantity</string>
+    <string name="accept">accept</string>
+    <string name="delete">delete</string>
+    <string name="close">close</string>
+    <string name="add_product">add product</string>
+    <string name="update_product">update product</string>
+    <string name="update_shopping_list">update shopping list</string>
+    <string name="you_did_not_select_anything">You did not select anything</string>
 
     <string name="potatoes">potatoes</string>
     <string name="cabbage">cabbage</string>

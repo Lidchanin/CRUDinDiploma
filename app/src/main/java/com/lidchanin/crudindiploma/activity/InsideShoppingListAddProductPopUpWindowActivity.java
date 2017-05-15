@@ -2,6 +2,7 @@ package com.lidchanin.crudindiploma.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -44,7 +45,7 @@ public class InsideShoppingListAddProductPopUpWindowActivity extends AppCompatAc
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
-        getWindow().setLayout((int) (width * .8), (int) (height * .6));
+        getWindow().setLayout((int) (width * .8), ActionBar.LayoutParams.WRAP_CONTENT);
 
         productDAO = new ProductDAO(this);
 

@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -16,12 +15,15 @@ import android.widget.Toast;
 
 import com.lidchanin.crudindiploma.R;
 import com.lidchanin.crudindiploma.adapter.InsideShoppingListRecyclerViewAdapter;
+import com.lidchanin.crudindiploma.data.dao.ExistingProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ProductDAO;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
+import com.lidchanin.crudindiploma.data.model.ExistingProduct;
 import com.lidchanin.crudindiploma.data.model.Product;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,15 +37,15 @@ import java.util.List;
 public class InsideShoppingListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewAllProducts;
-    private TextView textViewCostsSum;
 
     private List<Product> products;
+    private List<ExistingProduct> existingProducts;
     private long shoppingListId;
-    private double[] quantities;
     private double costsSum = 0;
 
     private ShoppingListDAO shoppingListDAO;
     private ProductDAO productDAO;
+    private ExistingProductDAO existingProductDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +57,10 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         }
 
         shoppingListId = getIntent().getLongExtra("shoppingListId", -1);
-        quantities = getIntent().getDoubleArrayExtra("quantities");
-        if (quantities != null)
-            for (int i = 0; i < quantities.length; i++) {
-                Log.d("MY_LOG", "q = " + quantities[i]);
-            }
 
         shoppingListDAO = new ShoppingListDAO(this);
         productDAO = new ProductDAO(this);
+        existingProductDAO = new ExistingProductDAO(this);
 
         initializeData(shoppingListId);
         initializeViewsAndButtons(shoppingListId);
@@ -73,7 +71,11 @@ public class InsideShoppingListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
     }
 
     /**
-     * Method <code>initializeData</code> reads and receives all products in current shopping list
+     * Method <code>initializeData</code> reads and receives all data in current shopping list
      * from the database.
      *
      * @param shoppingListId is the current shopping list id.
@@ -100,9 +102,13 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         products = productDAO.getAllFromCurrentShoppingList(shoppingListId);
         if (products == null) {
             products = new ArrayList<>();
+        }
+        existingProducts = existingProductDAO.getAllFromCurrentShoppingList(shoppingListId);
+        if (existingProducts == null) {
+            existingProducts = new ArrayList<>();
         } else {
-            for (int i = 0; i < products.size(); i++) {
-                costsSum += products.get(i).getCost();
+            for (int i = 0; i < existingProducts.size(); i++) {
+                costsSum += existingProducts.get(i).getTotalCost();
             }
         }
     }
@@ -131,7 +137,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 findViewById(R.id.inside_shopping_list_text_view_shopping_list_name);
         textViewShoppingListName.setText(shoppingListName);
 
-        textViewCostsSum = (TextView)
+        TextView textViewCostsSum = (TextView)
                 findViewById(R.id.inside_shopping_list_text_view_products_costs_sum);
         textViewCostsSum.setText(getString(R.string.estimated_amount,
                 new DecimalFormat("#.##").format(costsSum)));
@@ -151,8 +157,8 @@ public class InsideShoppingListActivity extends AppCompatActivity {
      * Method <code>initializeAdapters</code> initializes adapter for {@link RecyclerView}.
      */
     private void initializeAdapters() {
-        InsideShoppingListRecyclerViewAdapter adapter
-                = new InsideShoppingListRecyclerViewAdapter(products, this, shoppingListId);
+        InsideShoppingListRecyclerViewAdapter adapter = new InsideShoppingListRecyclerViewAdapter(
+                products, existingProducts, this, shoppingListId);
         recyclerViewAllProducts.setAdapter(adapter);
     }
 
@@ -170,6 +176,7 @@ public class InsideShoppingListActivity extends AppCompatActivity {
      * reminding the user that he forgot to buy.
      */
     private void createAndShowAlertDialog() {
+        AlertDialog dialog;
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.are_you_forgot);
         final List<Product> topFiveProducts = productDAO.getTopFiveProducts(products);
@@ -177,31 +184,37 @@ public class InsideShoppingListActivity extends AppCompatActivity {
         for (int i = 0; i < productsNames.length; i++) {
             productsNames[i] = topFiveProducts.get(i).getName();
         }
-        final boolean[] state = {false, false, false, false, false};
+        final Boolean[] states = new Boolean[productsNames.length];
+        Arrays.fill(states, false);
         builder.setMultiChoiceItems(productsNames, null,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        Toast.makeText(getApplicationContext(), productsNames[which],
-                                Toast.LENGTH_SHORT).show();
-                        state[which] = isChecked;
+                        states[which] = isChecked;
                     }
                 });
-        builder.setCancelable(false);
         builder.setPositiveButton(R.string.add_selected_products,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        for (int i = 0; i < 5; i++) {
-                            if (state[i]) {
-                                productDAO.assignProductToShoppingList(shoppingListId,
-                                        topFiveProducts.get(i).getId());
+                        if (allFalse(states)) {
+                            Toast.makeText(InsideShoppingListActivity.this,
+                                    getString(R.string.you_did_not_select_anything),
+                                    Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            for (int i = 0; i < 5; i++) {
+                                if (states[i]) {
+                                    productDAO.assignProductToShoppingList(shoppingListId,
+                                            topFiveProducts.get(i).getId());
+                                }
                             }
+                            Intent intent = new Intent(InsideShoppingListActivity.this,
+                                    InsideShoppingListActivity.class);
+                            intent.putExtra("shoppingListId", shoppingListId);
+                            startActivity(intent);
+                            dialog.dismiss();
                         }
-                        Intent intent = new Intent(InsideShoppingListActivity.this,
-                                MainScreenActivity.class);
-                        startActivity(intent);
-                        dialog.dismiss();
                     }
                 });
         builder.setNegativeButton(R.string.no_thanks, new DialogInterface.OnClickListener() {
@@ -213,7 +226,30 @@ public class InsideShoppingListActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                startActivity(new Intent(InsideShoppingListActivity.this,
+                        MainScreenActivity.class));
+                dialog.dismiss();
+            }
+        });
         dialog.show();
+    }
+
+    /**
+     * Method <code>allFalse</code> checks the boolean array and gives us the answer that all
+     * elements are false or not.
+     *
+     * @param states contains all checkboxes states.
+     * @return if true all elements are false, else true.
+     */
+    private static boolean allFalse(Boolean[] states) {
+        for (boolean state : states) {
+            if (state)
+                return false;
+        }
+        return true;
     }
 }

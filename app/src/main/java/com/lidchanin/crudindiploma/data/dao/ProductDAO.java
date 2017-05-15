@@ -118,12 +118,12 @@ public class ProductDAO extends DatabaseDAO {
         List<Product> products = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_PRODUCTS + " tp, "
                 + DatabaseHelper.TABLE_SHOPPING_LISTS + " tl, "
-                + DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS + " tlp "
+                + DatabaseHelper.TABLE_EXISTING_PRODUCTS + " tep "
                 + "WHERE tl." + DatabaseHelper.COLUMN_ID + " = '" + shoppingListId + "'"
                 + " AND " + "tp." + DatabaseHelper.COLUMN_ID
-                + " = " + "tlp." + DatabaseHelper.COLUMN_PRODUCT_ID
+                + " = " + "tep." + DatabaseHelper.COLUMN_PRODUCT_ID
                 + " AND " + "tl." + DatabaseHelper.COLUMN_ID
-                + " = " + "tlp." + DatabaseHelper.COLUMN_LIST_ID;
+                + " = " + "tep." + DatabaseHelper.COLUMN_LIST_ID;
         Cursor cursor = database.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
@@ -244,7 +244,7 @@ public class ProductDAO extends DatabaseDAO {
      * @param productId      is the product id, which you want to delete form shopping list.
      */
     public void delete(long shoppingListId, long productId) {
-        database.delete(DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS,
+        database.delete(DatabaseHelper.TABLE_EXISTING_PRODUCTS,
                 WHERE_LIST_ID_EQUALS + " AND " + WHERE_PRODUCT_ID_EQUALS,
                 new String[]{String.valueOf(shoppingListId), String.valueOf(productId)});
     }
@@ -259,7 +259,7 @@ public class ProductDAO extends DatabaseDAO {
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.COLUMN_LIST_ID, shoppingListId);
         contentValues.put(DatabaseHelper.COLUMN_PRODUCT_ID, productId);
-        database.insert(DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS, null, contentValues);
+        database.insert(DatabaseHelper.TABLE_EXISTING_PRODUCTS, null, contentValues);
     }
 
     /**
@@ -270,7 +270,7 @@ public class ProductDAO extends DatabaseDAO {
      * @return there is relationship or not.
      */
     private boolean isExistRelationship(long shoppingListId, long productId) {
-        String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_SHOPPING_LISTS_PRODUCTS
+        String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_EXISTING_PRODUCTS
                 + " WHERE "
                 + DatabaseHelper.COLUMN_LIST_ID + " = " + shoppingListId
                 + " AND "

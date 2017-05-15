@@ -19,7 +19,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:src="@drawable/ic_assignment_black_24dp" />
+                android:src="@drawable/ic_assignment_black_24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/add_a_new_shopping_list" />
 
             <TextView
                 android:id="@+id/main_screen_text_view_name_shopping_list_in_card_view"
@@ -34,7 +36,9 @@
                 android:id="@+id/main_screen_image_button_delete_in_card_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_clear_black_24dp" />
+                android:src="@drawable/ic_clear_black_24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/delete_shopping_list" />
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

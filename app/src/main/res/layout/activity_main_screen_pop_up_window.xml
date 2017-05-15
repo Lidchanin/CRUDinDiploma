@@ -15,7 +15,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         app:srcCompat="@drawable/ic_close_black_24dp"
-        tools:ignore="VectorDrawableCompat" />
+        tools:ignore="VectorDrawableCompat"
+        android:contentDescription="@string/close" />
 
     <EditText
         android:id="@+id/main_screen_edit_text_shopping_list_name_in_pop_up_window"
@@ -38,6 +39,17 @@
         tools:ignore="VectorDrawableCompat"
         android:layout_alignBottom="@+id/main_screen_edit_text_shopping_list_name_in_pop_up_window"
         android:layout_toLeftOf="@+id/main_screen_image_button_close_in_pop_up_window"
-        android:layout_toStartOf="@+id/main_screen_image_button_close_in_pop_up_window" />
+        android:layout_toStartOf="@+id/main_screen_image_button_close_in_pop_up_window"
+        android:contentDescription="@string/accept" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/main_screen_image_button_confirm_in_pop_up_window"
+        android:layout_alignLeft="@+id/main_screen_edit_text_shopping_list_name_in_pop_up_window"
+        android:layout_alignStart="@+id/main_screen_edit_text_shopping_list_name_in_pop_up_window"
+        android:layout_marginBottom="10dp"
+        android:text="@string/update_shopping_list" />
 
 </RelativeLayout>

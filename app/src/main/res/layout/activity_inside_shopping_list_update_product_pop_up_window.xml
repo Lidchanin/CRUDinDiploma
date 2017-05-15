@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.lidchanin.crudindiploma.activity.InsideShoppingListUpdateProductPopUpWindowActivity">
 
     <ImageButton
@@ -12,12 +13,10 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_close_black_24dp"
         tools:ignore="VectorDrawableCompat"
-        tools:layout_editor_absoluteY="-3dp"
-        tools:layout_editor_absoluteX="334dp"
+        android:contentDescription="@string/close"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="28dp"
-        android:layout_marginEnd="28dp" />
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:id="@+id/inside_shopping_list_update_product_pop_up_window_edit_text_product_name"
@@ -50,11 +49,20 @@
         tools:ignore="VectorDrawableCompat"
         tools:layout_editor_absoluteY="101dp"
         tools:layout_editor_absoluteX="262dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginRight="13dp"
-        android:layout_marginEnd="13dp"
-        android:layout_below="@+id/inside_shopping_list_update_product_pop_up_window_image_button_close"
-        android:layout_alignRight="@+id/inside_shopping_list_update_product_pop_up_window_image_button_close"
-        android:layout_alignEnd="@+id/inside_shopping_list_update_product_pop_up_window_image_button_close" />
+        android:contentDescription="@string/update_product"
+        android:layout_below="@+id/inside_shopping_list_update_product_pop_up_window_edit_text_product_name"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="19dp"
+        android:layout_marginEnd="19dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/inside_shopping_list_update_product_pop_up_window_edit_text_product_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/inside_shopping_list_update_product_pop_up_window_edit_text_product_name"
+        android:layout_marginTop="12dp"
+        android:text="@string/update_product" />
 
 </RelativeLayout>
