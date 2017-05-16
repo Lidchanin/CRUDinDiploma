@@ -29,6 +29,8 @@
     <string name="update_product">update product</string>
     <string name="update_shopping_list">update shopping list</string>
     <string name="you_did_not_select_anything">You did not select anything</string>
+    <string name="database_date_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="needed_date_format">dd.MM.yyyy   HH:mm:ss</string>
 
     <string name="potatoes">potatoes</string>
     <string name="cabbage">cabbage</string>

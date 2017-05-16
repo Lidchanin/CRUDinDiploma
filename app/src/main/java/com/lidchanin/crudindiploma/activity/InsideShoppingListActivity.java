@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -108,8 +109,14 @@ public class InsideShoppingListActivity extends AppCompatActivity {
             existingProducts = new ArrayList<>();
         } else {
             for (int i = 0; i < existingProducts.size(); i++) {
-                costsSum += existingProducts.get(i).getTotalCost();
+                double existingProductCost = existingProducts.get(i).getTotalCost();
+                if (existingProductCost == 0) {
+                    costsSum += products.get(i).getCost();
+                } else {
+                    costsSum += existingProducts.get(i).getTotalCost();
+                }
             }
+            Log.d("MY_LOG", "" + costsSum);
         }
     }
 

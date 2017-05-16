@@ -16,29 +16,45 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/ic_assignment_black_24dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/add_a_new_shopping_list" />
-
-            <TextView
-                android:id="@+id/main_screen_text_view_name_shopping_list_in_card_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="10"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textSize="30sp" />
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:contentDescription="@string/add_a_new_shopping_list"
+                android:padding="10dp"
+                android:src="@drawable/ic_assignment_black_24dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/main_screen_text_view_name_shopping_list_in_card_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/main_screen_text_view_date_of_creation_in_card_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:textSize="20sp"/>
+
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/main_screen_image_button_delete_in_card_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_clear_black_24dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:contentDescription="@string/delete_shopping_list" />
+                android:contentDescription="@string/delete_shopping_list"
+                android:src="@drawable/ic_clear_black_24dp" />
 
         </LinearLayout>
     </android.support.v7.widget.CardView>

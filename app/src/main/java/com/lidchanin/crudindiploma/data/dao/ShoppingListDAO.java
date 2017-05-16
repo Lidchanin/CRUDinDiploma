@@ -3,7 +3,6 @@ package com.lidchanin.crudindiploma.data.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.lidchanin.crudindiploma.data.DatabaseHelper;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
@@ -97,7 +96,8 @@ public class ShoppingListDAO extends DatabaseDAO {
      */
     public List<ShoppingList> getAll() {
         List<ShoppingList> shoppingLists = new ArrayList<>();
-        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME};
+        String[] columns = {DatabaseHelper.COLUMN_ID, DatabaseHelper.COLUMN_NAME,
+                DatabaseHelper.COLUMN_DATE_OF_CREATION};
         Cursor cursor = database.query(DatabaseHelper.TABLE_SHOPPING_LISTS, columns, null, null,
                 null, null, null);
         if (cursor.moveToFirst()) {
@@ -105,6 +105,7 @@ public class ShoppingListDAO extends DatabaseDAO {
                 ShoppingList shoppingList = new ShoppingList();
                 shoppingList.setId(cursor.getLong(0));
                 shoppingList.setName(cursor.getString(1));
+                shoppingList.setDateOfCreation(cursor.getString(2));
                 shoppingLists.add(shoppingList);
             } while (cursor.moveToNext());
             cursor.close();

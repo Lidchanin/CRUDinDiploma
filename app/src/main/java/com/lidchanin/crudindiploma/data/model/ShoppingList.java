@@ -1,5 +1,7 @@
 package com.lidchanin.crudindiploma.data.model;
 
+import java.util.Date;
+
 /**
  * Class {@link ShoppingList} is an entity. Shopping list contains id, name.
  *
@@ -9,6 +11,7 @@ public class ShoppingList {
 
     private long id;
     private String name;
+    private String dateOfCreation;
 
     /**
      * Constructor for create an empty shopping list.
@@ -52,5 +55,13 @@ public class ShoppingList {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDateOfCreation() {
+        return dateOfCreation;
+    }
+
+    public void setDateOfCreation(String dateOfCreation) {
+        this.dateOfCreation = dateOfCreation;
     }
 }

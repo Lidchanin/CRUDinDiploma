@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -19,7 +18,11 @@ import com.lidchanin.crudindiploma.activity.MainScreenPopUpWindowActivity;
 import com.lidchanin.crudindiploma.data.dao.ShoppingListDAO;
 import com.lidchanin.crudindiploma.data.model.ShoppingList;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class <code>MainScreenRecyclerViewAdapter</code> is an adapter for {@link RecyclerView} from
@@ -50,6 +53,8 @@ public class MainScreenRecyclerViewAdapter
     @Override
     public void onBindViewHolder(final MainScreenViewHolder holder, final int position) {
         holder.textViewShoppingListName.setText(shoppingLists.get(position).getName());
+        holder.textViewDateOfCreation.setText(dateConverter(shoppingLists.get(position)
+                .getDateOfCreation()));
         holder.cardViewShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +119,20 @@ public class MainScreenRecyclerViewAdapter
         dialog.show();
     }
 
+    private String dateConverter(String previousDate) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(context
+                .getString(R.string.database_date_format), Locale.getDefault());
+        Date finalDate = null;
+        try {
+            finalDate = simpleDateFormat.parse(previousDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        simpleDateFormat = new SimpleDateFormat(context.getString(R.string.needed_date_format),
+                Locale.getDefault());
+        return simpleDateFormat.format(finalDate);
+    }
+
     /**
      * Class <code>MainScreenViewHolder</code> is the View Holder for
      * {@link MainScreenRecyclerViewAdapter}.
@@ -124,14 +143,17 @@ public class MainScreenRecyclerViewAdapter
 
         private CardView cardViewShoppingList;
         private TextView textViewShoppingListName;
+        private TextView textViewDateOfCreation;
         private ImageButton imageButtonDelete;
 
         MainScreenViewHolder(View itemView) {
             super(itemView);
             cardViewShoppingList = (CardView)
                     itemView.findViewById(R.id.main_screen_card_view_shopping_list);
-            textViewShoppingListName = (TextView)
-                    itemView.findViewById(R.id.main_screen_text_view_name_shopping_list_in_card_view);
+            textViewShoppingListName = (TextView) itemView
+                    .findViewById(R.id.main_screen_text_view_name_shopping_list_in_card_view);
+            textViewDateOfCreation = (TextView)
+                    itemView.findViewById(R.id.main_screen_text_view_date_of_creation_in_card_view);
             imageButtonDelete = (ImageButton)
                     itemView.findViewById(R.id.main_screen_image_button_delete_in_card_view);
         }

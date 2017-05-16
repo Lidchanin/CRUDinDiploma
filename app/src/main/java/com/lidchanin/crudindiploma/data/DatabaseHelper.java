@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 10;
     private static final String DATABASE_NAME = "personal_shopping_lists";
 
     public static final String TABLE_SHOPPING_LISTS = "shopping_lists";
@@ -36,12 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PRODUCT_ID = "product_id";
     public static final String COLUMN_QUANTITY_OR_WEIGHT = "quantity_or_weight";
     public static final String COLUMN_TOTAL_COST = "total_cost";
+    public static final String COLUMN_DATE_OF_CREATION = "date_of_creation";
 
     private static final String CREATE_TABLE_SHOPPING_LISTS
             = "CREATE TABLE " + TABLE_SHOPPING_LISTS
             + "("
             + COLUMN_ID + " INTEGER PRIMARY KEY NOT NULL, "
-            + COLUMN_NAME + " TEXT NOT NULL"
+            + COLUMN_NAME + " TEXT NOT NULL, "
+            + COLUMN_DATE_OF_CREATION + " DATETIME DEFAULT CURRENT_TIMESTAMP"
             + ");";
     private static final String CREATE_TABLE_PRODUCTS
             = "CREATE TABLE " + TABLE_PRODUCTS

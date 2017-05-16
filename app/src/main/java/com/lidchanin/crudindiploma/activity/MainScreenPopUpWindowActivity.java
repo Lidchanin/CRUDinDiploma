@@ -36,7 +36,6 @@ public class MainScreenPopUpWindowActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
         getWindow().setLayout((int) (width * .8), ActionBar.LayoutParams.WRAP_CONTENT);
 
         shoppingListDAO = new ShoppingListDAO(this);

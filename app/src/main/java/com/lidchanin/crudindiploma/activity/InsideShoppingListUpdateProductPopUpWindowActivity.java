@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,8 +40,9 @@ public class InsideShoppingListUpdateProductPopUpWindowActivity extends AppCompa
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
         getWindow().setLayout((int) (width * .8), ActionBar.LayoutParams.WRAP_CONTENT);
+//        getWindow().setGravity(Gravity.CENTER);
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         productDAO = new ProductDAO(this);
         productId = getIntent().getLongExtra("productId", -1);

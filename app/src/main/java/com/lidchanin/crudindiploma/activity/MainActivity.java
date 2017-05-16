@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 List<ShoppingList> shoppingLists = shoppingListDAO.getAll();
                 for (int i = 0; i < shoppingLists.size(); i++) {
                     Log.d("MY_LOG", "\tid: " + shoppingLists.get(i).getId()
-                            + ",\tname: " + shoppingLists.get(i).getName());
+                            + ",\tname: " + shoppingLists.get(i).getName()
+                            + ",\tdate: " + shoppingLists.get(i).getDateOfCreation());
                 }
             }
         });

@@ -25,8 +25,9 @@
         android:layout_marginLeft="21dp"
         android:layout_marginStart="21dp"
         android:ems="10"
-        android:inputType="text"
+        android:inputType="text|textMultiLine"
         android:hint="@string/enter_new_name"
+        android:imeOptions="actionDone"
         android:layout_below="@+id/main_screen_image_button_close_in_pop_up_window"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
